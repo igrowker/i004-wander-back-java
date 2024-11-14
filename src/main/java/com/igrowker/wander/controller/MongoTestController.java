@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-//Endpoint for verify the connection to MongoDB
+//PROVISIONAL Endpoint for verify the connection to MongoDB
 public class MongoTestController {
 
     @Autowired
