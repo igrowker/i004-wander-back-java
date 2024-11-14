@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+//Endpoint for verify the connection to MongoDB
 public class MongoTestController {
 
     @Autowired
@@ -18,13 +19,13 @@ public class MongoTestController {
     @GetMapping("/check-mongo")
     public ResponseEntity<String> checkMongoConnection() {
         try {
-            // Ejecuta una consulta para verificar si la conexión a la base de datos funciona.
+        	// Run a query to check if the database connection is working.
             mongoTemplate.getDb().listCollectionNames();
 
-            // Si se ejecuta sin excepciones, la conexión es exitosa.
+         // If it runs without exceptions, the connection is successful.
             return ResponseEntity.ok("La conexión con MongoDB fue exitosa!");
         } catch (Exception e) {
-            // Si ocurre una excepción, responde con el error y un estado de error del servidor.
+        	// If an exception occurs, respond with the error and a server error status.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al conectar con MongoDB: " + e.getMessage());
         }
