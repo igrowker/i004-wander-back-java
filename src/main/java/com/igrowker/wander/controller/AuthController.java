@@ -1,10 +1,7 @@
 
 package com.igrowker.wander.controller;
 
-/**
- *
- * @author AdolfoJF
- */
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
