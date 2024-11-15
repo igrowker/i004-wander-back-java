@@ -3,10 +3,15 @@ package com.igrowker.wander.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.igrowker.wander.dto.LoginRequest;
 import com.igrowker.wander.model.User;
 import com.igrowker.wander.repository.UserRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import java.util.Date;
+import java.util.Optional;
 
 /**
  *
@@ -18,22 +23,22 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    private final String secretKey = "claveSecretaMuySegura"; // Cambia esto por una clave segura
+
     public String authenticateUser(LoginRequest loginRequest) {
-        // Buscar el usuario en la base de datos por nombre de usuario
-        User user = userRepository.findByUsername(loginRequest.getUsername());
-
-        if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
-            // Generar token de autenticación (JWT)
-            String token = generateToken(user);
-            return token;
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+        if (userOptional.isPresent() && userOptional.get().getPassword().equals(loginRequest.getPassword())) {
+            return generateToken(userOptional.get());
         }
-
-        // Si la autenticación falla, retorna null
         return null;
     }
 
     private String generateToken(User user) {
-        // Implementación de generación de token JWT
-        return "tokenGenerado"; // Reemplaza esto con la lógica real
+        return Jwts.builder()
+                .setSubject(user.getEmail()) // Cambia `getUsername` a `getEmail` si es necesario
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 horas
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 }
