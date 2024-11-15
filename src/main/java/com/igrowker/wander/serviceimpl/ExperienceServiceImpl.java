@@ -18,16 +18,27 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public ExperienceEntity createExperience(ExperienceEntity experience) {
-    	// Additional business logic validations
-
-    	// Get authentication from the context
+    	// Retrieve authentication from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Ensure the authentication is not null and the context has a valid user
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("El usuario no está autenticado.");
+        }
+
+        // Retrieve the current user from the authentication
         User user = (User) authentication.getPrincipal();
 
-     // Assign hostId directly from the authenticated user
+        // Ensure the user has the "PROVIDER" role before proceeding
+        if (!user.getRole().equalsIgnoreCase("PROVIDER")) {
+            throw new SecurityException("El usuario no tiene permisos para crear una experiencia.");
+        }
+
+        // Assign the host ID from the authenticated user
         experience.setHostId(user.getId());
-    	
-    	// Title validation
+
+        // Additional validations for the experience data
+        // Title validation
         if (experience.getTitle() == null || experience.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("El título de la experiencia es obligatorio y no puede estar vacío.");
         }
