@@ -1,12 +1,16 @@
 package com.igrowker.wander.entity;
 
-
-import lombok.Data;
 import org.springframework.data.annotation.Id;
-//Provisional class to generate the MVC structure
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class WanderEntity {
-	 @Id
-	    private Long id;
+
+    @Id
+    private String id;
 }

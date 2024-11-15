@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -25,9 +27,8 @@ public class UserService {
             throw new RuntimeException("Email already exists");
         }
 
-        // Crear nuevo usuario
         User user = new User();
-        user.setId(generateId()); // Implementar método para generar ID
+        user.setId(generateId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
@@ -41,7 +42,12 @@ public class UserService {
     }
 
     private Long generateId() {
-        // Implementación simple para generar ID
-        return System.currentTimeMillis();
+        List<User> users = userRepository.findAll();
+        return users.isEmpty() ? 1 :
+                users.stream().max(Comparator.comparing(User::getId)).get().getId() + 1;
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 }
