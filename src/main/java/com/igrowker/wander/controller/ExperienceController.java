@@ -1,7 +1,7 @@
 package com.igrowker.wander.controller;
 
 import com.igrowker.wander.entity.ExperienceEntity;
-import com.igrowker.wander.repository.ExperienceRepository;
+import com.igrowker.wander.service.ExperienceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,17 +14,23 @@ import javax.validation.Valid;
 @RequestMapping("/experiences")
 public class ExperienceController {
 
-	// Repository injection to access the database
+    // Service injection to manage business logic
     @Autowired
-    private ExperienceRepository experienceRepository;
+    private ExperienceService experienceService;
 
-    //Endpoint to create a new experience
+    /**
+     * Endpoint to create a new experience
+     * @param experience Object received from the BFF with the experience data
+     * @return Response indicating if the experience was created successfully
+     */
     @PostMapping
     public ResponseEntity<String> createExperience(@Valid @RequestBody ExperienceEntity experience) {
         try {
-        	// Save the experience in MongoDB
-            experienceRepository.save(experience);
+            // Delegate the creation of experience to the service layer
+            experienceService.createExperience(experience);
             return ResponseEntity.status(HttpStatus.CREATED).body("Experiencia creada con éxito");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en los datos de la experiencia: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al crear la experiencia: " + e.getMessage());
