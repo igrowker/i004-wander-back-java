@@ -13,10 +13,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.Optional;
 
-/**
- *
- * @author AdolfoJF
- */
+
 @Service
 public class AuthService {
 
@@ -27,8 +24,8 @@ public class AuthService {
 
     public String authenticateUser(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-        if (userOptional.isPresent() && userOptional.get().getPassword().equals(loginRequest.getPassword())) {
-            return generateToken(userOptional.get());
+         if (userOptional.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
+         return generateToken(userOptional.get());
         }
         return null;
     }
