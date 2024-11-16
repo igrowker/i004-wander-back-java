@@ -4,7 +4,7 @@ package com.igrowker.wander.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.igrowker.wander.dto.LoginRequest;
-import com.igrowker.wander.model.User;
+import com.igrowker.wander.entity.User;
 import com.igrowker.wander.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
