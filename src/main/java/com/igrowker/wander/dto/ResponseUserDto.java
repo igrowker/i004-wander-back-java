@@ -10,13 +10,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class ResponseUserDto {
 
+    private String id;
     private String name;
     private String email;
-    private String password;
     private String role;
     private List<String> preferences;
     private String location;
-    private List<Long> bookings;
+    private LocalDateTime createdAt;
 }
