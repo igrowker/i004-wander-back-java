@@ -12,8 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Document(collection = "users")
 @Data
@@ -41,6 +43,14 @@ public class User implements UserDetails {
     private String avatar = "https://medvirturials.com/img/default-image.png";
 
     private boolean enabled = false;
+
+    private List<String> preferences;
+
+    private String location;
+
+    private LocalDateTime createdAt;
+
+    private List<Long> bookings;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
