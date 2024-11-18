@@ -54,8 +54,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 			throw new IllegalArgumentException(
 					"La descripción de la experiencia es obligatoria y no puede estar vacía.");
 		}
-		if (experience.getDescription().length() < 10 || experience.getDescription().length() > 5000) {
-			throw new IllegalArgumentException("La descripción debe tener entre 10 y 5000 caracteres.");
+		if (experience.getDescription().length() < 10 || experience.getDescription().length() > 500) {
+			throw new IllegalArgumentException("La descripción debe tener entre 10 y 500 caracteres.");
 		}
 
 		// Location validation
