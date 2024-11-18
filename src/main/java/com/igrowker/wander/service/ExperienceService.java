@@ -10,6 +10,6 @@ public interface ExperienceService {
     ExperienceEntity createExperience(ExperienceEntity experience);
     
     //Method to list experiences with filters
-    List<ExperienceEntity> getExperiences(String location, String type, Double maxPrice);
+    List<ExperienceEntity> getExperiences(String location, Double maxPrice);
 
 }

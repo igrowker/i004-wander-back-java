@@ -43,11 +43,10 @@ public class ExperienceController {
     @GetMapping
     public ResponseEntity<List<ExperienceEntity>> getExperiences(
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String type,
             @RequestParam(required = false) Double maxPrice
     ) {
         try {
-            List<ExperienceEntity> experiences = experienceService.getExperiences(location, type, maxPrice);
+            List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice);
             return ResponseEntity.ok(experiences);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -9,21 +9,14 @@ import com.igrowker.wander.entity.ExperienceEntity;
 
 @EnableMongoRepositories(basePackages = "com.igrowker.wander.repository")
 public interface ExperienceRepository extends MongoRepository<ExperienceEntity, String> {
-	
-    // Method to find experiences by location
+
+	// Method to search experiences by location
     List<ExperienceEntity> findByLocation(String location);
 
-    // Method to find experiences by type
-    List<ExperienceEntity> findByType(String type);
-
-    // Method to find experiences with a maximum price
+    // Method to search experiences with a maximum price
     List<ExperienceEntity> findByPriceLessThanEqual(Double maxPrice);
-
-    // Method to find experiences by location and type
-    List<ExperienceEntity> findByLocationAndType(String location, String type);
-
-    // Method to find experiences by location, type, and maximum price
-    List<ExperienceEntity> findByLocationAndTypeAndPriceLessThanEqual(String location, String type, Double maxPrice);
-
+ 
+    // Method to search experiences by location and maximum price
+    List<ExperienceEntity> findByLocationAndPriceLessThanEqual(String location, Double maxPrice);
 }
 

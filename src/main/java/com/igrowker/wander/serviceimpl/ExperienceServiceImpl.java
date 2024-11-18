@@ -78,21 +78,17 @@ public class ExperienceServiceImpl implements ExperienceService {
 	}
 
 	@Override
-	public List<ExperienceEntity> getExperiences(String location, String type, Double maxPrice) {
-	    // Check which filters are present and create the corresponding query
-	    if (location != null && type != null && maxPrice != null) {
-	        return experienceRepository.findByLocationAndTypeAndPriceLessThanEqual(location, type, maxPrice);
-	    } else if (location != null && type != null) {
-	        return experienceRepository.findByLocationAndType(location, type);
-	    } else if (location != null) {
-	        return experienceRepository.findByLocation(location);
-	    } else if (type != null) {
-	        return experienceRepository.findByType(type);
-	    } else if (maxPrice != null) {
-	        return experienceRepository.findByPriceLessThanEqual(maxPrice);
-	    } else {
-	        // If no filters are provided, we return all experiences
-	        return experienceRepository.findAll();
-	    }
-	}
+    public List<ExperienceEntity> getExperiences(String location, Double maxPrice) {
+        // Check which filters are present and create the corresponding query
+        if (location != null && maxPrice != null) {
+            return experienceRepository.findByLocationAndPriceLessThanEqual(location, maxPrice);
+        } else if (location != null) {
+            return experienceRepository.findByLocation(location);
+        } else if (maxPrice != null) {
+            return experienceRepository.findByPriceLessThanEqual(maxPrice);
+        } else {
+            // If no filters are provided, we return all experiences
+            return experienceRepository.findAll();
+        }
+    }
 }
