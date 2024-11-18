@@ -12,4 +12,7 @@ public interface ExperienceService {
     //Method to list experiences with filters
     List<ExperienceEntity> getExperiences(String location, Double maxPrice);
 
+    // Method to get an experience by ID
+    ExperienceEntity getExperienceById(String id);
+
 }

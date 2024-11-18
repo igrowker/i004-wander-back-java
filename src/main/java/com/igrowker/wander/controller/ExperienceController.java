@@ -53,5 +53,19 @@ public class ExperienceController {
                     .body(null);
         }
     }
+    
+    // Endpoint to get experience by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
+        try {
+            ExperienceEntity experience = experienceService.getExperienceById(id);
+            return ResponseEntity.ok(experience);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
 

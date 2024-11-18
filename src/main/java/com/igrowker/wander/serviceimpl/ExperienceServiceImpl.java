@@ -6,7 +6,6 @@ import com.igrowker.wander.repository.ExperienceRepository;
 import com.igrowker.wander.service.ExperienceService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -91,4 +90,13 @@ public class ExperienceServiceImpl implements ExperienceService {
             return experienceRepository.findAll();
         }
     }
+	
+	@Override
+	public ExperienceEntity getExperienceById(String id) {
+	    /* Use the repository to find the experience by ID
+	    If not found, throw an IllegalArgumentException with an appropriate message*/
+	    return experienceRepository.findById(id)
+	            .orElseThrow(() -> new IllegalArgumentException("Experience with ID: " + id + " was not found."));
+	}
+
 }
