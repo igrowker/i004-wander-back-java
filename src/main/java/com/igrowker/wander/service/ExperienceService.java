@@ -15,4 +15,7 @@ public interface ExperienceService {
     // Method to get an experience by ID
     ExperienceEntity getExperienceById(String id);
 
+    // Method to update an existing experience
+    ExperienceEntity updateExperience(String id, ExperienceEntity updatedExperience);
+
 }
