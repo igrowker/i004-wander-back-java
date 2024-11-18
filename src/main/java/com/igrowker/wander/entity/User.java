@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Size(min = 6, message = "The password is too short")
     private String password;
 
-    private String role = "TOURIST";
+    private String Erole = "TOURIST";
 
     private String avatar = "https://medvirturials.com/img/default-image.png";
 
@@ -51,10 +51,11 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     private List<Long> bookings;
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(() -> "ROLE_" + this.role);
+        return Collections.singletonList(() -> "ERole_" + this.role);
     }
 
     @Override
