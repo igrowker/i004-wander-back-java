@@ -19,7 +19,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 	@Autowired
 	private ExperienceRepository experienceRepository;
 
-	@Override
+	@Override 
+	// Method to create a new experience
 	public ExperienceEntity createExperience(ExperienceEntity experience) {
 		// Retrieve authentication from the security context
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,8 +55,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 			throw new IllegalArgumentException(
 					"La descripción de la experiencia es obligatoria y no puede estar vacía.");
 		}
-		if (experience.getDescription().length() < 10 || experience.getDescription().length() > 5000) {
-			throw new IllegalArgumentException("La descripción debe tener entre 10 y 5000 caracteres.");
+		if (experience.getDescription().length() < 10 || experience.getDescription().length() > 500) {
+			throw new IllegalArgumentException("La descripción debe tener entre 10 y 500 caracteres.");
 		}
 
 		// Location validation
@@ -78,6 +79,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 	}
 
 	@Override
+	// Method to get a list of experiences with optional filters
     public List<ExperienceEntity> getExperiences(String location, Double maxPrice) {
         // Check which filters are present and create the corresponding query
         if (location != null && maxPrice != null) {
@@ -93,11 +95,52 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 	
 	@Override
+	// Method to get a single experience by ID
 	public ExperienceEntity getExperienceById(String id) {
 	    /* Use the repository to find the experience by ID
 	    If not found, throw an IllegalArgumentException with an appropriate message*/
 	    return experienceRepository.findById(id)
 	            .orElseThrow(() -> new IllegalArgumentException("Experience with ID: " + id + " was not found."));
+	}
+
+	@Override
+	//Method to update an experience by provider
+	public ExperienceEntity updateExperience(String id, ExperienceEntity newExperienceData) {
+	    // Step 1: Find the existing experience by ID
+	    ExperienceEntity existingExperience = experienceRepository.findById(id)
+	            .orElseThrow(() -> new IllegalArgumentException("No se encontró la experiencia con el ID: " + id));
+
+	    // Step 2: Validate if the user is the creator of the experience
+	    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    if (!existingExperience.getHostId().equals(user.getId())) {
+	        throw new SecurityException("El usuario no tiene permiso para editar esta experiencia.");
+	    }
+
+	    // Step 3: Update the experience fields with the new data
+	    if (newExperienceData.getTitle() != null) {
+	        existingExperience.setTitle(newExperienceData.getTitle());
+	    }
+	    if (newExperienceData.getDescription() != null) {
+	        existingExperience.setDescription(newExperienceData.getDescription());
+	    }
+	    if (newExperienceData.getLocation() != null) {
+	        existingExperience.setLocation(newExperienceData.getLocation());
+	    }
+	    if (newExperienceData.getPrice() > 0) {
+	        existingExperience.setPrice(newExperienceData.getPrice());
+	    }
+	    if (newExperienceData.getAvailabilityDates() != null) {
+	        existingExperience.setAvailabilityDates(newExperienceData.getAvailabilityDates());
+	    }
+	    if (newExperienceData.getTags() != null) {
+	        existingExperience.setTags(newExperienceData.getTags());
+	    }
+	    if (newExperienceData.getCapacity() > 0) {
+	        existingExperience.setCapacity(newExperienceData.getCapacity());
+	    }
+
+	    // Step 4: Save the updated experience to the database
+	    return experienceRepository.save(existingExperience);
 	}
 
 }

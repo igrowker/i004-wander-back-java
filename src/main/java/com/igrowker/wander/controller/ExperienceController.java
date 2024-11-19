@@ -66,5 +66,23 @@ public class ExperienceController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+ // Endpoint to update an experience by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<ExperienceEntity> updateExperience(
+            @PathVariable String id,
+            @Valid @RequestBody ExperienceEntity newExperienceData
+    ) {
+        try {
+            ExperienceEntity updatedExperience = experienceService.updateExperience(id, newExperienceData);
+            return ResponseEntity.ok(updatedExperience);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
 
