@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 @RestController
@@ -36,4 +38,20 @@ public class ExperienceController {
                     .body("Error al crear la experiencia: " + e.getMessage());
         }
     }
+
+    // Endpoint to list experiences
+    @GetMapping
+    public ResponseEntity<List<ExperienceEntity>> getExperiences(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        try {
+            List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice);
+            return ResponseEntity.ok(experiences);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 }
+
