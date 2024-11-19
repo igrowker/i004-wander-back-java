@@ -1,14 +1,17 @@
 
 package com.igrowker.wander.dto;
 
-/**
- *
- * @author AdolfoJF
- */
-// LoginRequest.java
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+
 
 public class LoginRequest {
+    
+    @Email(message = "Invalid email format")
+    @NotNull(message = "Email is required")
     private String email;
+    
+    @NotNull(message = "Password is required")
     private String password;
 
     public String getEmail() {
