@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 @RestController
@@ -36,4 +38,51 @@ public class ExperienceController {
                     .body("Error al crear la experiencia: " + e.getMessage());
         }
     }
+
+    // Endpoint to list experiences
+    @GetMapping
+    public ResponseEntity<List<ExperienceEntity>> getExperiences(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        try {
+            List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice);
+            return ResponseEntity.ok(experiences);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+    
+    // Endpoint to get experience by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
+        try {
+            ExperienceEntity experience = experienceService.getExperienceById(id);
+            return ResponseEntity.ok(experience);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+ // Endpoint to update an experience by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<ExperienceEntity> updateExperience(
+            @PathVariable String id,
+            @Valid @RequestBody ExperienceEntity newExperienceData
+    ) {
+        try {
+            ExperienceEntity updatedExperience = experienceService.updateExperience(id, newExperienceData);
+            return ResponseEntity.ok(updatedExperience);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
+
