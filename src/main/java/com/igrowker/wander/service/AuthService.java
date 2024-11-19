@@ -1,17 +1,20 @@
+
 package com.igrowker.wander.service;
 
-import com.igrowker.wander.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.igrowker.wander.dto.LoginRequest;
 import com.igrowker.wander.entity.User;
+import com.igrowker.wander.repository.UserRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.util.Date;
 import java.util.Optional;
+
 
 @Service
 public class AuthService {
@@ -22,12 +25,13 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final String secretKey = "claveSecretaMuySegura"; // Cambia esto por una clave segura
+    @Value("${JWT_SECRET_KEY}")
+    private String secretKey;
 
     public String authenticateUser(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
          if (userOptional.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())) {
-         return generateToken(userOptional.get());
+            return generateToken(userOptional.get());
         }
         return null;
     }
