@@ -2,6 +2,7 @@ package com.igrowker.wander.security;
 
 import com.igrowker.wander.exception.ExpiredJwtException;
 import com.igrowker.wander.exception.InvalidJwtException;
+import com.igrowker.wander.repository.RevokedTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
+    private final RevokedTokenRepository revokedTokenRepository;
+    
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -40,6 +42,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
+            if (revokedTokenRepository.existsByToken(jwt)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token revocado. No tienes acceso.");
+                return;
+            }
             String userEmail = jwtService.extractEmail(jwt);
             if (userEmail != null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

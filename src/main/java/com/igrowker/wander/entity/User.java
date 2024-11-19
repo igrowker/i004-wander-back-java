@@ -48,7 +48,7 @@ public class User implements UserDetails {
 
     private String location;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private List<Long> bookings;
 

@@ -1,10 +1,7 @@
 
 package com.igrowker.wander.dto;
 
-/**
- *
- * @author AdolfoJF
- */
+
 public class AuthResponse {
     
     private String token;
