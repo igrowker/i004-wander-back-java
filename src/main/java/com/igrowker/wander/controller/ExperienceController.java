@@ -66,7 +66,7 @@ public class ExperienceController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
+
  // Endpoint to update an experience by ID
     @PutMapping("/{id}")
     public ResponseEntity<ExperienceEntity> updateExperience(

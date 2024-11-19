@@ -17,5 +17,4 @@ public interface ExperienceService {
 
     // Method to update an existing experience
     ExperienceEntity updateExperience(String id, ExperienceEntity updatedExperience);
-
 }
