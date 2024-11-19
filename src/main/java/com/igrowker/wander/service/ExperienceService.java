@@ -14,5 +14,4 @@ public interface ExperienceService {
 
     // Method to get an experience by ID
     ExperienceEntity getExperienceById(String id);
-
 }
