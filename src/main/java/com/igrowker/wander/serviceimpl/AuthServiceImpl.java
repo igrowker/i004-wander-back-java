@@ -1,20 +1,16 @@
 package com.igrowker.wander.serviceimpl;
 
-import com.igrowker.wander.dto.user.LoginRequest;
-import com.igrowker.wander.dto.user.LoginResponse;
-import com.igrowker.wander.dto.user.RegisterUserDto;
-import com.igrowker.wander.dto.user.ResponseUserDto;
+import com.igrowker.wander.dto.user.*;
 import com.igrowker.wander.entity.RevokedToken;
 import com.igrowker.wander.entity.User;
-import com.igrowker.wander.exception.InvalidJwtException;
-import com.igrowker.wander.exception.InvalidUserCredentialsException;
-import com.igrowker.wander.exception.ResourceAlreadyExistsException;
-import com.igrowker.wander.exception.ResourceNotFoundException;
+import com.igrowker.wander.exception.*;
 import com.igrowker.wander.repository.RevokedTokenRepository;
 import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
+import com.igrowker.wander.service.EmailService;
 import com.igrowker.wander.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -49,7 +47,9 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtService jwtService;
 
-    // email
+    @Autowired
+    private EmailService emailService;
+
 
     @Transactional
     public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
@@ -65,17 +65,21 @@ public class AuthServiceImpl implements AuthService {
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(true);
+        user.setEnabled(false);
 
-        User saveUser = userRepository.save(user);
+        user.setVerificationCode(generateVerificationCode());
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+
+        User savedUser = userRepository.save(user);
         ResponseUserDto responseUserDto = new ResponseUserDto();
-        responseUserDto.setId(saveUser.getId());
-        responseUserDto.setName(saveUser.getName());
-        responseUserDto.setEmail(saveUser.getEmail());
-        responseUserDto.setRole(saveUser.getRole());
-        responseUserDto.setPreferences(saveUser.getPreferences());
-        responseUserDto.setLocation(saveUser.getLocation());
-        responseUserDto.setCreatedAt(saveUser.getCreatedAt());
+        responseUserDto.setId(savedUser.getId());
+        responseUserDto.setName(savedUser.getName());
+        responseUserDto.setEmail(savedUser.getEmail());
+        responseUserDto.setRole(savedUser.getRole());
+        responseUserDto.setPreferences(savedUser.getPreferences());
+        responseUserDto.setLocation(savedUser.getLocation());
+        responseUserDto.setCreatedAt(savedUser.getCreatedAt());
+        responseUserDto.setVerificationCode(savedUser.getVerificationCode());
 
         return responseUserDto;
     }
@@ -138,5 +142,75 @@ public class AuthServiceImpl implements AuthService {
             revokedTokenRepository.save(new RevokedToken(token, expirationDate));
         }
     }
+
+    public ResponseUserDto verifyUser(RequestVerifyUserDto verifyUserDto) {
+        Optional<User> optionalUser = userRepository.findByEmail(verifyUserDto.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+
+        User user = optionalUser.get();
+
+        if (user.getVerificationCode() == null) {
+            throw new InvalidDataException("Cuenta ya se encuentra verificada.");
+        }
+
+        if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidDataException("Código de verificación vencido.");
+        }
+
+        if (!user.getVerificationCode().equals(verifyUserDto.getVerificationCode())) {
+            throw new InvalidDataException("Código de verificación incorrecto.");
+        }
+
+        user.setEnabled(true);
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiresAt(null);
+        User savedUser = userRepository.save(user);
+
+        ResponseUserDto responseUserDto = new ResponseUserDto();
+        responseUserDto.setId(savedUser.getId());
+        responseUserDto.setName(savedUser.getName());
+        responseUserDto.setEmail(savedUser.getEmail());
+        responseUserDto.setRole(savedUser.getRole());
+        responseUserDto.setPreferences(savedUser.getPreferences());
+        responseUserDto.setLocation(savedUser.getLocation());
+        responseUserDto.setCreatedAt(savedUser.getCreatedAt());
+        responseUserDto.setVerificationCode(null);
+
+        return responseUserDto;
+    }
+
+    private void sendVerificationEmail(User user) {
+        String subject = "Verificación de cuenta";
+        String verificationCode = user.getVerificationCode();
+        String htmlMessage = "<html>"
+                + "<body style=\"font-family: Arial, sans-serif;\">"
+                + "<div style=\"background-color: #FF9D14; padding: 20px;\">"
+                + "<h2 style=\"color: #333;\">¡Bienvenido a Wander!</h2>"
+                + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
+                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "</div>"
+                + "</div>"
+                + "</body>"
+                + "</html>";
+
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        return String.valueOf(code);
+    }
+
+
 
 }
