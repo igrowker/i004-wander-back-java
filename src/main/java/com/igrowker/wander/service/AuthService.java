@@ -1,9 +1,9 @@
 package com.igrowker.wander.service;
 
-import com.igrowker.wander.dto.LoginRequest;
-import com.igrowker.wander.dto.LoginResponse;
-import com.igrowker.wander.dto.RegisterUserDto;
-import com.igrowker.wander.dto.ResponseUserDto;
+import com.igrowker.wander.dto.user.LoginRequest;
+import com.igrowker.wander.dto.user.LoginResponse;
+import com.igrowker.wander.dto.user.RegisterUserDto;
+import com.igrowker.wander.dto.user.ResponseUserDto;
 
 public interface AuthService {
 

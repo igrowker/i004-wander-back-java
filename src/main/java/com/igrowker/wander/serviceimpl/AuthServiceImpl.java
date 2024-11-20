@@ -1,9 +1,9 @@
 package com.igrowker.wander.serviceimpl;
 
-import com.igrowker.wander.dto.LoginRequest;
-import com.igrowker.wander.dto.LoginResponse;
-import com.igrowker.wander.dto.RegisterUserDto;
-import com.igrowker.wander.dto.ResponseUserDto;
+import com.igrowker.wander.dto.user.LoginRequest;
+import com.igrowker.wander.dto.user.LoginResponse;
+import com.igrowker.wander.dto.user.RegisterUserDto;
+import com.igrowker.wander.dto.user.ResponseUserDto;
 import com.igrowker.wander.entity.RevokedToken;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.exception.InvalidJwtException;
@@ -15,6 +15,7 @@ import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import com.igrowker.wander.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -51,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
     // email
 
     @Transactional
-    public ResponseUserDto registerUser(RegisterUserDto userDto) {
+    public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ResourceAlreadyExistsException("Email " + userDto.getEmail() + " already exists");
         }
@@ -80,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public LoginResponse authenticateUser(LoginRequest loginRequest) {
+    public LoginResponse authenticateUser(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(
                 () -> new ResourceNotFoundException("Usuario no encontrado."));
 

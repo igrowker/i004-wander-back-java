@@ -1,5 +1,5 @@
 
-package com.igrowker.wander.dto;
+package com.igrowker.wander.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
