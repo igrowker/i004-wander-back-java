@@ -1,5 +1,5 @@
 // Select the 'wander' database if not already selected
-const db = connect('localhost/wander');
+const db = connect('mongodb+srv://<USER>:<PASSWORD>@wanderDB.j7bl8.mongodb.net/wanderDB?retryWrites=true&w=majority&appName=wanderDB');
 
 // Insert data into the 'users' collection
 db.users.insertMany([
