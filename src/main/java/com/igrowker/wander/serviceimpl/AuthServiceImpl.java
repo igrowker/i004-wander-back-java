@@ -30,9 +30,6 @@ import java.util.Random;
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -69,6 +66,8 @@ public class AuthServiceImpl implements AuthService {
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+
+        sendVerificationEmail(user);
 
         User savedUser = userRepository.save(user);
         ResponseUserDto responseUserDto = new ResponseUserDto();
@@ -210,7 +209,6 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
-
 
 
 }
