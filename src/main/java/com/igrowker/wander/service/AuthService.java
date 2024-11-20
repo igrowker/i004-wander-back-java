@@ -11,4 +11,6 @@ public interface AuthService {
 
     LoginResponse authenticateUser(LoginRequest loginRequest);
 
+    String logout(String authorizationHeader);
+
 }
