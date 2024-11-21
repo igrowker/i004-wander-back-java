@@ -28,7 +28,7 @@ public class Booking {
     @NotBlank(message = "The user ID cannot be empty or null.")
     private String userId;
 
-    @NotNull(message = "The booking date cannot be null.")
+    @NotNull(message = "The booking status cannot be null.")
     private BookingStatus status = BookingStatus.PENDING;
 
     @NotNull(message = "The booking date cannot be null.")
