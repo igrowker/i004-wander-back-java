@@ -1,12 +1,12 @@
 package com.igrowker.wander.service;
 
-import com.igrowker.wander.entity.Booking;
+import com.igrowker.wander.dto.booking.ResponseBookingDto;
 
 import java.util.List;
 
 public interface BookingService {
-    Booking getBookingById(String id);
-    List<Booking> getBookingsByUserId(String userId);
-    List<Booking> getBookingsByExperienceId(String experienceId);
+    ResponseBookingDto getBookingById(String id);
+    List<ResponseBookingDto> getBookingsByUserId(String userId);
+    List<ResponseBookingDto> getBookingsByExperienceId(String experienceId);
 
 }

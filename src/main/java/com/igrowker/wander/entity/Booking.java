@@ -2,6 +2,7 @@ package com.igrowker.wander.entity;
 
 import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -21,24 +22,28 @@ public class Booking {
     @Id
     private String id;
 
-    @NotNull
+    @NotBlank(message = "The experience ID cannot be empty or null.")
     private String experienceId;
 
-    @NotNull
+    @NotBlank(message = "The user ID cannot be empty or null.")
     private String userId;
 
-    @NotNull
+    @NotNull(message = "The booking date cannot be null.")
     private BookingStatus status = BookingStatus.PENDING;
 
-    @CreatedDate
+    @NotNull(message = "The booking date cannot be null.")
     private LocalDateTime bookingDate;
 
-    @NotNull
+    @Positive(message = "The total price must be positive.")
     private double totalPrice;
 
-    @Positive
+    @Positive(message = "The number of participants must be positive.")
     private int participants;
 
-    @NotNull
+    @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
 }
