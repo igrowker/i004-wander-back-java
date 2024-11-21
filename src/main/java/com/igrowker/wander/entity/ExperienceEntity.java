@@ -29,13 +29,13 @@ public class ExperienceEntity {
     @Field("hostId") 
     private String hostId; 
 
-    private double price;
+    private Double price;
 
     private List<String> availabilityDates;
 
     private List<String> tags;
 
-    private double rating;
+    private Double rating;
 
     private int capacity;
 
