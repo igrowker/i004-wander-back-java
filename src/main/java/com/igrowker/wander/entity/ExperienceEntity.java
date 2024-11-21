@@ -40,4 +40,6 @@ public class ExperienceEntity {
     private int capacity;
 
     private Date createdAt = new Date();
+    
+    private boolean status = true;
 }
