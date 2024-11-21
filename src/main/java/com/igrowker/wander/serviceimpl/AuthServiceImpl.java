@@ -9,7 +9,6 @@ import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import com.igrowker.wander.service.EmailService;
-import com.igrowker.wander.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,6 +250,7 @@ public class AuthServiceImpl implements AuthService {
     private void sendPasswordResetEmail(User user, String resetToken) {
         String subject = "Restablecimiento de contraseña";
         String resetUrl = "http://your-app-url.com/reset-password?token=" + resetToken;
+
 
         String htmlMessage = "<html><body>"
                 + "<h3>Solicitud de restablecimiento de contraseña</h3>"
