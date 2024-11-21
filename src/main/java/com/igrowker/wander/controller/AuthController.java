@@ -8,6 +8,7 @@ import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +52,18 @@ public class AuthController {
         String response = authService.logout(authorizationHeader);
         return ResponseEntity.ok(response);
     }
+    
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
+        authService.sendForgotPasswordEmail(request.get("email"));
+        return ResponseEntity.ok("Correo enviado si el email existe en nuestro sistema");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        authService.resetPassword(request.get("token"), request.get("newPassword"));
+        return ResponseEntity.ok("Contraseña restablecida con éxito");
+    }
 }
+
 
