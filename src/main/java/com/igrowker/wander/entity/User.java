@@ -52,6 +52,10 @@ public class User implements UserDetails {
 
     private List<Long> bookings;
 
+    private String verificationCode;
+
+    private LocalDateTime verificationCodeExpiresAt;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(() -> "ROLE_" + this.role);

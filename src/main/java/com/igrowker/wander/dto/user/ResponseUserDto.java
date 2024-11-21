@@ -19,4 +19,5 @@ public class ResponseUserDto {
     private List<String> preferences;
     private String location;
     private LocalDateTime createdAt;
+    private String verificationCode;
 }

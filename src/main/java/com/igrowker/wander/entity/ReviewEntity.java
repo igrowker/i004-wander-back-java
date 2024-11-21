@@ -2,13 +2,12 @@ package com.igrowker.wander.entity;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,19 +22,19 @@ public class ReviewEntity {
 	@Id
     private String id; 
 	
-	@NotNull
+	@NotBlank
 	private String experienceId;
 	
-	@NotNull
+	@NotBlank
 	private String userId;
 	
-	@NotNull
+	@NotBlank
 	@Min(1)
     @Max(5)
 	private Double rating; 
 	
 	private String comment;
 	
-	@NotNull
+	@NotBlank
 	private Date createdAt = new Date();
 }
