@@ -1,9 +1,6 @@
 package com.igrowker.wander.controller;
 
-import com.igrowker.wander.dto.user.LoginRequest;
-import com.igrowker.wander.dto.user.LoginResponse;
-import com.igrowker.wander.dto.user.RegisterUserDto;
-import com.igrowker.wander.dto.user.ResponseUserDto;
+import com.igrowker.wander.dto.user.*;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +42,12 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse loginResponse = authService.authenticateUser(loginRequest);
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/verify-user")
+    public ResponseEntity<ResponseUserDto> verifyUser(@Valid @RequestBody RequestVerifyUserDto requestVerifyUserDto) {
+        ResponseUserDto verifiedUser = authService.verifyUser(requestVerifyUserDto);
+        return ResponseEntity.ok(verifiedUser);
     }
 
     @PostMapping("/logout")

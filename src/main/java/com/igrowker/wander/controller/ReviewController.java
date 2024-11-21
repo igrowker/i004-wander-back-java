@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.igrowker.wander.dto.review.RequestReviewDto;
 import com.igrowker.wander.entity.ReviewEntity;
 import com.igrowker.wander.service.ReviewService;
 
@@ -26,10 +27,9 @@ public class ReviewController {
      * @return Response indicating if the review was added successfully
      */
     @PostMapping
-    public ResponseEntity<String> addReview(@Valid @RequestBody ReviewEntity review) {
+    public ResponseEntity<String> addReview(@Valid @RequestBody RequestReviewDto reviewDto) {
         try {
-            // Delegate adding the review to the service layer
-            reviewService.addReview(review);
+            reviewService.addReview(reviewDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("Review added successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error in the review data: " + e.getMessage());
