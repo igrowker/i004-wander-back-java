@@ -97,7 +97,7 @@ public class ExperienceServiceImpl implements ExperienceService {
 	    if (newExperienceData.getTags() != null) {
 	        existingExperience.setTags(newExperienceData.getTags());
 	    }
-	    if (newExperienceData.getCapacity() > 0) {
+	    if (newExperienceData.getCapacity() > 0 && newExperienceData.getCapacity() <= 50) {
 	        existingExperience.setCapacity(newExperienceData.getCapacity());
 	    }
 
