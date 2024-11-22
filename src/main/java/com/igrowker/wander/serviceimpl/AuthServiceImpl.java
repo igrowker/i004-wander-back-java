@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private EmailService emailService;
 
-
+    @Override
     @Transactional
     public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
@@ -83,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
+    @Override
     public LoginResponse authenticateUser(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(
                 () -> new ResourceNotFoundException("Usuario no encontrado."));
@@ -111,19 +112,20 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
     public String logout(String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new InvalidJwtException("Invalid Authorization");
         }
 
         try {
-            // Extract the token from the header
+            
             String token = authorizationHeader.substring(7);
 
-            // Validate the token using JwtService
+            
             jwtService.extractAllClaims(token); // Throws an exception if the token is invalid
 
-            // Invalidate the token by storing it in the revoked tokens repository
+            
             invalidateToken(token, jwtService.extractExpiration(token));
 
             // Success response
@@ -208,5 +210,58 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
+    
+    
+@Transactional
+    @Override
+    public void sendForgotPasswordEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+        // Generar un token de restablecimiento de contraseña
+        String resetToken = jwtService.generatePasswordResetToken(user.getEmail());
+
+        // Enviar el correo con el enlace de restablecimiento
+        sendPasswordResetEmail(user, resetToken);
+    }
+
+    // Restablecer la contraseña
+    @Transactional
+    @Override
+    public void resetPassword(String token, String newPassword) {
+        // Validar el token de restablecimiento
+        if (!jwtService.isPasswordResetTokenValid(token)) {
+            throw new InvalidJwtException("Token inválido o expirado");
+        }
+
+        // Extraer el email del token
+        String email = jwtService.extractEmail(token);
+
+        // Buscar al usuario por email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        // Actualizar la contraseña
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    // Enviar correo electrónico de recuperación
+    private void sendPasswordResetEmail(User user, String resetToken) {
+        String subject = "Restablecimiento de contraseña";
+        String resetUrl = "http://your-app-url.com/reset-password?token=" + resetToken;
+
+
+        String htmlMessage = "<html><body>"
+                + "<h3>Solicitud de restablecimiento de contraseña</h3>"
+                + "<p>Haz clic en el enlace a continuación para restablecer tu contraseña:</p>"
+                + "<a href='" + resetUrl + "'>Restablecer contraseña</a>"
+                + "</body></html>";
+
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error enviando email: " + e.getMessage());
+        }
+    }
 }
