@@ -9,7 +9,6 @@ import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import com.igrowker.wander.service.EmailService;
-import com.igrowker.wander.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(false);
+        user.setEnabled(true);
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
@@ -209,6 +208,5 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
-
 
 }

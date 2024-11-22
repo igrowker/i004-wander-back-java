@@ -63,4 +63,9 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(status.value(), message);
         return new ResponseEntity<>(errorResponse, status);
     }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessRuleException(BusinessRuleException ex) {
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 }
