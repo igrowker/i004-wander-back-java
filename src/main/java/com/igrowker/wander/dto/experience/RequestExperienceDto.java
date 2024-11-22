@@ -1,6 +1,7 @@
 package com.igrowker.wander.dto.experience;
 
 import java.util.List;
+import jakarta.validation.constraints.Max;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -34,8 +35,10 @@ public class RequestExperienceDto {
 
     private List<String> tags;
 
-    private double rating;
+    private Double rating;
 
     @NotNull(message= "La capacidad debe ser al menos 1.")
+    @Min(value = 1, message = "La capacidad debe ser al menos 1.")
+    @Max(value = 50, message = "La capacidad no puede ser mayor de 50.")
     private int capacity;
 }
