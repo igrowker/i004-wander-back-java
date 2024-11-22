@@ -64,7 +64,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
-        authService.resetPassword(request.get("token"), request.get("newPassword"));
+        authService.resetPassword(request.get("email"),request.get("code"), request.get("newPassword"));
         return ResponseEntity.ok("Contraseña restablecida con éxito");
     }
 }
