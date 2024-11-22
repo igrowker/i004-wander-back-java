@@ -1,8 +1,8 @@
 package com.igrowker.wander.dto.experience;
 
 import java.util.List;
-
 import jakarta.validation.constraints.Max;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,14 +28,14 @@ public class RequestExperienceDto {
     @NotBlank
     private String hostId; 
 
-    @Size(min=1, message="El precio debe ser un valor positivo.")
-    private double price;
+    @Min(value=1, message="El precio debe ser un valor positivo.")
+    private Double price;
 
     private List<String> availabilityDates;
 
     private List<String> tags;
 
-    private double rating;
+    private Double rating;
 
     @NotNull(message= "La capacidad debe ser al menos 1.")
     @Min(value = 1, message = "La capacidad debe ser al menos 1.")
