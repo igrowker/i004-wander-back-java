@@ -41,20 +41,34 @@ public class ExperienceServiceImpl implements ExperienceService {
 	}
 
 	@Override
-	// Method to get a list of experiences with optional filters
-    public List<ExperienceEntity> getExperiences(String location, Double maxPrice) {
-        // Check which filters are present and create the corresponding query
-        if (location != null && maxPrice != null) {
-            return experienceRepository.findByLocationAndPriceLessThanEqual(location, maxPrice);
-        } else if (location != null) {
-            return experienceRepository.findByLocation(location);
-        } else if (maxPrice != null) {
-            return experienceRepository.findByPriceLessThanEqual(maxPrice);
-        } else {
-            // If no filters are provided, we return all experiences
-            return experienceRepository.findAll();
-        }
-    }
+	public List<ExperienceEntity> getExperiences(String location, Double maxPrice, String title) {
+	    if (location != null && maxPrice != null && title != null) {
+	        // Filtro por ubicación, precio y título
+	        return experienceRepository.findByLocationAndPriceLessThanEqualAndTitleContaining(location, maxPrice, title);
+	    } else if (location != null && title != null) {
+	        // Filtro por ubicación y título
+	        return experienceRepository.findByLocationAndTitleContaining(location, title);
+	    } else if (maxPrice != null && title != null) {
+	        // Filtro por precio y título
+	        return experienceRepository.findByPriceLessThanEqualAndTitleContaining(maxPrice, title);
+	    } else if (location != null && maxPrice != null) {
+	        // Filtro por ubicación y precio
+	        return experienceRepository.findByLocationAndPriceLessThanEqual(location, maxPrice);
+	    } else if (location != null) {
+	        // Filtro por ubicación
+	        return experienceRepository.findByLocation(location);
+	    } else if (maxPrice != null) {
+	        // Filtro por precio
+	        return experienceRepository.findByPriceLessThanEqual(maxPrice);
+	    } else if (title != null) {
+	        // Filtro por título
+	        return experienceRepository.findByTitleContaining(title);
+	    } else {
+	        // Sin filtros, devuelve todas las experiencias
+	        return experienceRepository.findAll();
+	    }
+	}
+
 	
 	@Override
 	// Method to get a single experience by ID
