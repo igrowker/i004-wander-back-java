@@ -31,13 +31,10 @@ public class Booking {
     @NotNull(message = "The booking status cannot be null.")
     private BookingStatus status = BookingStatus.PENDING;
 
-    @NotNull(message = "The booking date cannot be null.")
     private LocalDateTime bookingDate;
 
-    @Positive(message = "The total price must be positive.")
     private double totalPrice;
 
-    @Positive(message = "The number of participants must be positive.")
     private int participants;
 
     @NotNull(message = "The payment status cannot be null.")

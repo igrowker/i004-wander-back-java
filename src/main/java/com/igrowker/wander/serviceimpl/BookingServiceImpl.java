@@ -1,5 +1,6 @@
 package com.igrowker.wander.serviceimpl;
 
+import com.igrowker.wander.dto.booking.RequestBookingDto;
 import com.igrowker.wander.dto.booking.ResponseBookingDto;
 import com.igrowker.wander.entity.Booking;
 import com.igrowker.wander.exception.ResourceNotFoundException;
@@ -35,6 +36,38 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.findByExperienceId(experienceId);
         return bookings.stream().map(this::convertToDto).collect(Collectors.toList());
     }
+
+    @Override
+    public ResponseBookingDto updateBooking(String id, RequestBookingDto requestDto) {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+
+        if (requestDto.getStatus() != null) {
+            booking.setStatus(requestDto.getStatus());
+        }
+
+        if (requestDto.getPaymentStatus() != null) {
+            booking.setPaymentStatus(requestDto.getPaymentStatus());
+        }
+
+        if (requestDto.getBookingDate() != null) {
+            booking.setBookingDate(requestDto.getBookingDate());
+        }
+
+        if (requestDto.getParticipants() != null) {
+            booking.setParticipants(requestDto.getParticipants());
+        }
+
+        if (requestDto.getTotalPrice() != null) {
+            booking.setTotalPrice(requestDto.getTotalPrice());
+        }
+
+        Booking updatedBooking = bookingRepository.save(booking);
+
+        return convertToDto(updatedBooking);
+    }
+
 
     private ResponseBookingDto convertToDto(Booking booking) {
         return new ResponseBookingDto(
