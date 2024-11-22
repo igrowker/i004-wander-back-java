@@ -17,4 +17,3 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
  
     List<ExperienceEntity> findByLocationAndPriceLessThanEqual(String location, Double maxPrice);
 }
-
