@@ -56,8 +56,8 @@ public class User implements UserDetails {
 
     private LocalDateTime verificationCodeExpiresAt;
     
-    private String passwordResetToken;
-    private LocalDateTime passwordResetTokenExpiresAt;
+    private String passwordResetCode;
+    private LocalDateTime passwordResetCodeExpiresAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

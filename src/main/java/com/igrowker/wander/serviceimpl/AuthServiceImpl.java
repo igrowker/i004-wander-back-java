@@ -217,29 +217,40 @@ public class AuthServiceImpl implements AuthService {
     public void sendForgotPasswordEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
+                
         // Generar un token de restablecimiento de contraseña
-        String resetToken = jwtService.generatePasswordResetToken(user.getEmail());
-
+        
+        user.setPasswordResetCode(generateVerificationCode());
+        user.setPasswordResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
         // Enviar el correo con el enlace de restablecimiento
-        sendPasswordResetEmail(user, resetToken);
+        sendPasswordResetEmail(user);
     }
 
     // Restablecer la contraseña
     @Transactional
     @Override
-    public void resetPassword(String token, String newPassword) {
-        // Validar el token de restablecimiento
-        if (!jwtService.isPasswordResetTokenValid(token)) {
-            throw new InvalidJwtException("Token inválido o expirado");
+    public void resetPassword(String mail, String code, String newPassword) {
+        // Buscar al usuario por email
+        User user = userRepository.findByEmail(mail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        if (user.getPasswordResetCode() == null) {
+            throw new InvalidDataException("Cuenta ya se encuentra verificada.");
         }
 
-        // Extraer el email del token
-        String email = jwtService.extractEmail(token);
+        if (user.getPasswordResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidDataException("Código de verificación vencido.");
+        }
 
-        // Buscar al usuario por email
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        if (!user.getPasswordResetCode().equals(code)) {
+            throw new InvalidDataException("Código de verificación incorrecto.");
+        }
+
+        user.setEnabled(true);
+        user.setPasswordResetCode(null);
+        user.setPasswordResetCodeExpiresAt(null);
+
 
         // Actualizar la contraseña
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -247,15 +258,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // Enviar correo electrónico de recuperación
-    private void sendPasswordResetEmail(User user, String resetToken) {
+    private void sendPasswordResetEmail(User user) {
         String subject = "Restablecimiento de contraseña";
-        String resetUrl = "http://your-app-url.com/reset-password?token=" + resetToken;
 
 
         String htmlMessage = "<html><body>"
                 + "<h3>Solicitud de restablecimiento de contraseña</h3>"
                 + "<p>Haz clic en el enlace a continuación para restablecer tu contraseña:</p>"
-                + "<a href='" + resetUrl + "'>Restablecer contraseña</a>"
+                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + user.getPasswordResetCode() + "</p>"
                 + "</body></html>";
 
         try {
