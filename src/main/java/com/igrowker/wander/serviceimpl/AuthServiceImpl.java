@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(false);
+        user.setEnabled(true);
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
