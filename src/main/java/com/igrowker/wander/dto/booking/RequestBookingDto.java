@@ -1,30 +1,29 @@
 package com.igrowker.wander.dto.booking;
 
-import com.igrowker.wander.entity.enums.BookingStatus;
-import com.igrowker.wander.entity.enums.PaymentStatus;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RequestBookingDto {
 
-    private BookingStatus status;
+    @NotNull(message = "Experience ID is required")
+    private String experienceId;
 
-    private PaymentStatus paymentStatus;
+    @NotNull(message = "User ID is required")
+    private String userId;
 
-    @FutureOrPresent(message = "Booking date must be in the future or today.")
-    private LocalDateTime bookingDate;
+    @NotNull(message = "Booking date is required")
+    private Date bookingDate;
 
-    @Positive(message = "The number of participants must be positive.")
+    @NotNull(message = "Number of participants is required")
+    @Min(value = 1, message = "At least one participant is required")
     private Integer participants;
-
-    @Positive(message = "The total price must be positive.")
-    private Double totalPrice;
 }

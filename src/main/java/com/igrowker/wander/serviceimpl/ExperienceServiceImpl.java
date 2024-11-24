@@ -40,6 +40,35 @@ public class ExperienceServiceImpl implements ExperienceService {
 	}
 
 	@Override
+
+	public List<ExperienceEntity> getExperiences(String location, Double maxPrice, String title) {
+	    if (location != null && maxPrice != null && title != null) {
+	        // Filtro por ubicación, precio y título
+	        return experienceRepository.findByLocationAndPriceLessThanEqualAndTitleContaining(location, maxPrice, title);
+	    } else if (location != null && title != null) {
+	        // Filtro por ubicación y título
+	        return experienceRepository.findByLocationAndTitleContaining(location, title);
+	    } else if (maxPrice != null && title != null) {
+	        // Filtro por precio y título
+	        return experienceRepository.findByPriceLessThanEqualAndTitleContaining(maxPrice, title);
+	    } else if (location != null && maxPrice != null) {
+	        // Filtro por ubicación y precio
+	        return experienceRepository.findByLocationAndPriceLessThanEqual(location, maxPrice);
+	    } else if (location != null) {
+	        // Filtro por ubicación
+	        return experienceRepository.findByLocation(location);
+	    } else if (maxPrice != null) {
+	        // Filtro por precio
+	        return experienceRepository.findByPriceLessThanEqual(maxPrice);
+	    } else if (title != null) {
+	        // Filtro por título
+	        return experienceRepository.findByTitleContaining(title);
+	    } else {
+	        // Sin filtros, devuelve todas las experiencias
+	        return experienceRepository.findAll();
+	    }
+	}
+
     public List<ExperienceEntity> getExperiences(String location, Double maxPrice) {
         if (location != null && maxPrice != null) {
             return experienceRepository.findByLocationAndPriceLessThanEqual(location, maxPrice);
@@ -51,6 +80,7 @@ public class ExperienceServiceImpl implements ExperienceService {
             return experienceRepository.findAll();
         }
     }
+
 	
 	@Override
 	public ExperienceEntity getExperienceById(String id) {

@@ -25,6 +25,9 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+    
+    @Value("${jwt.password-reset.expiration}")
+    private long passwordResetExpiration;
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -46,6 +49,18 @@ public class JwtService {
     public long getExpirationTime() {
         return jwtExpiration;
     }
+    
+     public String generatePasswordResetToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("purpose", "password_reset");
+        return buildToken(claims, email, passwordResetExpiration); 
+    }
+
+    public boolean isPasswordResetTokenValid(String token) {
+        Claims claims = extractAllClaims(token);
+        String purpose = (String) claims.get("purpose");
+        return "password_reset".equals(purpose) && !isTokenExpired(token);
+    }
 
     private String buildToken(
             Map<String, Object> extraClaims,
@@ -61,7 +76,22 @@ public class JwtService {
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
+    
+    private String buildToken(
+            Map<String, Object> extraClaims,
+            String email,
+            long expiration
+    ) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(email) // Aquí se usa el email directamente como subject
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+    
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
         return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -92,5 +122,5 @@ public class JwtService {
 
     private Key getSignInKey() {
         return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
-    }
+    } 
 }

@@ -1,12 +1,17 @@
 package com.igrowker.wander.repository;
 
-import com.igrowker.wander.entity.Booking;
+import com.igrowker.wander.entity.BookingEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.util.List;
 
-public interface BookingRepository extends MongoRepository<Booking, String> {
+@EnableMongoRepositories(basePackages = "com.igrowker.wander.repository")
+public interface BookingRepository extends MongoRepository<BookingEntity, String> {
 
-    List<Booking> findByUserId(String userId);
-    List<Booking> findByExperienceId(String experienceId);
+    List<BookingEntity> findByUserId(String userId);
+
+    List<BookingEntity> findByExperienceId(String experienceId);
+
 }
+

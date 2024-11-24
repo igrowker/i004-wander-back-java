@@ -19,7 +19,6 @@ import javax.validation.Valid;
 @RequestMapping("/experiences")
 public class ExperienceController {
 
-	// Service injection to manage business logic
 	@Autowired
 	private ExperienceService experienceService;
 
@@ -39,19 +38,20 @@ public class ExperienceController {
 
 	}
 
-	// Endpoint to list experiences
 	@GetMapping
-	public ResponseEntity<List<ExperienceEntity>> getExperiences(@RequestParam(required = false) String location,
-			@RequestParam(required = false) Double maxPrice) {
-		try {
-			List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice);
-			return ResponseEntity.ok(experiences);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
+	public ResponseEntity<List<ExperienceEntity>> getExperiences(
+	        @RequestParam(required = false) String location,
+	        @RequestParam(required = false) Double maxPrice,
+	        @RequestParam(required = false) String title) {
+	    try {
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
+	        return ResponseEntity.ok(experiences);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
-	// Endpoint to get experience by ID
+
 	@GetMapping("/{id}")
 	public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
 		try {
@@ -64,7 +64,6 @@ public class ExperienceController {
 		}
 	}
 
-	// Endpoint to update an experience by ID
 	@PutMapping("/{id}")
 	public ResponseEntity<ExperienceEntity> updateExperience(@PathVariable String id,
 			@Valid @RequestBody ExperienceEntity newExperienceData) {
