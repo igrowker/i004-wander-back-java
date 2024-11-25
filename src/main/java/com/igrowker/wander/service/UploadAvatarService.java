@@ -1,6 +1,8 @@
 package com.igrowker.wander.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface UploadAvatarService {
 
-    boolean setAvatar(String email, String imageUrl);
+    boolean setAvatar(MultipartFile imageFile);
 }

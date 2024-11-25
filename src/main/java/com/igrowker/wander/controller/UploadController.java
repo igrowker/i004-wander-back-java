@@ -2,12 +2,11 @@ package com.igrowker.wander.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.igrowker.wander.service.UploadAvatarService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -16,11 +15,24 @@ public class UploadController {
     @Autowired
     private UploadAvatarService uploadAvatarService;
 
-    @PostMapping("/upload-avatar")
-    public ResponseEntity<String> uploadAvatar(@RequestParam("file") String imageUrl, String email) {
-        if (uploadAvatarService.setAvatar(email, imageUrl))
-            return ResponseEntity.status(HttpStatus.CREATED).body("La imagen ha sido cargada correctamente");
-        else
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al cargar la imagen");
+    @PostMapping(value = "/upload-avatar", consumes = "multipart/form-data")
+    public ResponseEntity<String> uploadAvatar(@RequestParam("image") MultipartFile imageFile) {
+        try {
+            if (imageFile.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío.");
+            }
+
+            String contentType = imageFile.getContentType();
+
+            if (!"image/png".equals(contentType) && !"image/jpeg".equals(contentType))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solo se permiten archivos PNG o JPG.");
+
+            System.out.println("El usuario pudo cargar la imagen: " + uploadAvatarService.setAvatar(imageFile));
+            return ResponseEntity.status(HttpStatus.CREATED).body("El archivo se ha subido correctamente.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al subir el archivo: " + e.getMessage());
         }
+    }
 }
