@@ -9,7 +9,6 @@ import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import com.igrowker.wander.service.EmailService;
-import com.igrowker.wander.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private EmailService emailService;
 
-
+    @Override
     @Transactional
     public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
@@ -62,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(false);
+        user.setEnabled(true);
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
@@ -84,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
+    @Override
     public LoginResponse authenticateUser(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(
                 () -> new ResourceNotFoundException("Usuario no encontrado."));
@@ -112,19 +112,20 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
     public String logout(String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new InvalidJwtException("Invalid Authorization");
         }
 
         try {
-            // Extract the token from the header
+            
             String token = authorizationHeader.substring(7);
 
-            // Validate the token using JwtService
+            
             jwtService.extractAllClaims(token); // Throws an exception if the token is invalid
 
-            // Invalidate the token by storing it in the revoked tokens repository
+            
             invalidateToken(token, jwtService.extractExpiration(token));
 
             // Success response
@@ -209,6 +210,69 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
+    
+    
+@Transactional
+    @Override
+    public void sendForgotPasswordEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+                
+        // Generar un token de restablecimiento de contraseña
+        
+        user.setPasswordResetCode(generateVerificationCode());
+        user.setPasswordResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+        // Enviar el correo con el enlace de restablecimiento
+        sendPasswordResetEmail(user);
+    }
+
+    // Restablecer la contraseña
+    @Transactional
+    @Override
+    public void resetPassword(String mail, String code, String newPassword) {
+        // Buscar al usuario por email
+        User user = userRepository.findByEmail(mail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        if (user.getPasswordResetCode() == null) {
+            throw new InvalidDataException("Cuenta ya se encuentra verificada.");
+        }
+
+        if (user.getPasswordResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidDataException("Código de verificación vencido.");
+        }
+
+        if (!user.getPasswordResetCode().equals(code)) {
+            throw new InvalidDataException("Código de verificación incorrecto.");
+        }
+
+        user.setEnabled(true);
+        user.setPasswordResetCode(null);
+        user.setPasswordResetCodeExpiresAt(null);
 
 
+        // Actualizar la contraseña
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    // Enviar correo electrónico de recuperación
+    private void sendPasswordResetEmail(User user) {
+        String subject = "Restablecimiento de contraseña";
+
+
+        String htmlMessage = "<html><body>"
+                + "<h3>Solicitud de restablecimiento de contraseña</h3>"
+                + "<p>Haz clic en el enlace a continuación para restablecer tu contraseña:</p>"
+                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + user.getPasswordResetCode() + "</p>"
+                + "</body></html>";
+
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error enviando email: " + e.getMessage());
+        }
+    }
 }

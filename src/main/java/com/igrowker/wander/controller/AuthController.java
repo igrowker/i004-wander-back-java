@@ -1,13 +1,11 @@
 package com.igrowker.wander.controller;
 
-import com.igrowker.wander.dto.user.LoginRequest;
-import com.igrowker.wander.dto.user.LoginResponse;
-import com.igrowker.wander.dto.user.RegisterUserDto;
-import com.igrowker.wander.dto.user.ResponseUserDto;
+import com.igrowker.wander.dto.user.*;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +44,29 @@ public class AuthController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @PostMapping("/verify-user")
+    public ResponseEntity<ResponseUserDto> verifyUser(@Valid @RequestBody RequestVerifyUserDto requestVerifyUserDto) {
+        ResponseUserDto verifiedUser = authService.verifyUser(requestVerifyUserDto);
+        return ResponseEntity.ok(verifiedUser);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String response = authService.logout(authorizationHeader);
         return ResponseEntity.ok(response);
     }
+    
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
+        authService.sendForgotPasswordEmail(request.get("email"));
+        return ResponseEntity.ok("Correo enviado si el email existe en nuestro sistema");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        authService.resetPassword(request.get("email"),request.get("code"), request.get("newPassword"));
+        return ResponseEntity.ok("Contraseña restablecida con éxito");
+    }
 }
+
 
