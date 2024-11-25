@@ -10,26 +10,17 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ResponseBookingDto {
-
     private String id;
-
     private String experienceId;
-
     private String userId;
-
     private BookingStatus status;
-
     private Date bookingDate;
-
     private double totalPrice;
-
-    private Integer participants;
-
+    private int participants;
     private PaymentStatus paymentStatus;
-
     private Date createdAt;
-
 }
+
