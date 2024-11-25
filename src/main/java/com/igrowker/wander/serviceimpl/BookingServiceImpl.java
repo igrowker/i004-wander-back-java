@@ -5,7 +5,9 @@ import com.igrowker.wander.dto.booking.ResponseBookingDto;
 import com.igrowker.wander.entity.BookingEntity;
 import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.entity.User;
-import com.igrowker.wander.enums.BookingStatus;
+import com.igrowker.wander.entity.enums.BookingStatus;
+import com.igrowker.wander.entity.enums.PaymentStatus;
+import com.igrowker.wander.exception.ResourceNotFoundException;
 import com.igrowker.wander.repository.BookingRepository;
 import com.igrowker.wander.repository.ExperienceRepository;
 import com.igrowker.wander.repository.UserRepository;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,6 +34,26 @@ public class BookingServiceImpl implements BookingService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Override
+    public ResponseBookingDto getBookingById(String id) {
+        BookingEntity booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
+        return convertToResponseDto(booking);
+    }
+
+    @Override
+    public List<ResponseBookingDto> getBookingsByUserId(String userId) {
+        List<BookingEntity> bookings = bookingRepository.findByUserId(userId);
+        return bookings.stream().map(this::convertToResponseDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ResponseBookingDto> getBookingsByExperienceId(String experienceId) {
+        List<BookingEntity> bookings = bookingRepository.findByExperienceId(experienceId);
+        return bookings.stream().map(this::convertToResponseDto).collect(Collectors.toList());
+    }
+
 
     @Override
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
@@ -50,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setParticipants(requestBookingDto.getParticipants());
         booking.setTotalPrice(calculateTotalPrice(experience, requestBookingDto.getParticipants()));
         booking.setStatus(BookingStatus.PENDING);
-        booking.setPaymentStatus("PENDING");
+        booking.setPaymentStatus(PaymentStatus.PENDING);
 
         BookingEntity savedBooking = bookingRepository.save(booking);
 
