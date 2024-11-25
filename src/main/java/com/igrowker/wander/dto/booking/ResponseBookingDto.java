@@ -2,6 +2,7 @@ package com.igrowker.wander.dto.booking;
 
 import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,3 +23,4 @@ public class ResponseBookingDto {
     private PaymentStatus paymentStatus;
     private Date createdAt;
 }
+
