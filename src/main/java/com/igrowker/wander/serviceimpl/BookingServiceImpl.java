@@ -66,13 +66,12 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if("TOURIST".equalsIgnoreCase(user.getRole())){
+        if ("TOURIST".equalsIgnoreCase(user.getRole())) {
             if (requestDto.getStatus() != BookingStatus.CANCELLED) {
                 throw new IllegalArgumentException("Tourists can only cancel bookings.");
             }
             booking.setStatus(BookingStatus.CANCELLED);
-        }
-        else if ("PROVIDER".equalsIgnoreCase(user.getRole())) {
+        } else if ("PROVIDER".equalsIgnoreCase(user.getRole())) {
             if (requestDto.getStatus() == null ||
                     !(requestDto.getStatus() == BookingStatus.CANCELLED ||
                             requestDto.getStatus() == BookingStatus.CONFIRMED ||
