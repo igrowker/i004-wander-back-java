@@ -14,4 +14,6 @@ public interface ExperienceService {
     ExperienceEntity getExperienceById(String id);
 
     ExperienceEntity updateExperience(String id, ExperienceEntity updatedExperience);
+    
+    List<ExperienceEntity> getExperiencesByTag(String tag);
 }
