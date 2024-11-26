@@ -9,7 +9,6 @@ import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import com.igrowker.wander.service.EmailService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
 
-        sendVerificationEmail(user);
+        emailService.sendVerificationEmail(user);
 
         User savedUser = userRepository.save(user);
         ResponseUserDto responseUserDto = new ResponseUserDto();
@@ -191,13 +190,11 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        // Generar un token de restablecimiento de contraseña
-
         user.setPasswordResetCode(generateVerificationCode());
         user.setPasswordResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
-        // Enviar el correo con el enlace de restablecimiento
-        sendPasswordResetEmail(user);
+
+        emailService.sendPasswordResetEmail(user);
     }
 
     @Transactional
@@ -235,49 +232,10 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private void sendVerificationEmail(User user) {
-        String subject = "Verificación de cuenta";
-        String verificationCode = user.getVerificationCode();
-        String htmlMessage = "<html>"
-                + "<body style=\"font-family: Arial, sans-serif;\">"
-                + "<div style=\"background-color: #FF9D14; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">¡Bienvenido a Wander!</h2>"
-                + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
-                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
-                + "</div>"
-                + "</div>"
-                + "</body>"
-                + "</html>";
-
-        try {
-            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-        } catch (MessagingException e) {
-            throw new IllegalArgumentException("Error enviando email: " + e.getMessage());
-        }
-    }
-
     private String generateVerificationCode() {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
 
-    private void sendPasswordResetEmail(User user) {
-        String subject = "Restablecimiento de contraseña";
-
-        String htmlMessage = "<html><body>"
-                + "<h3>Solicitud de restablecimiento de contraseña</h3>"
-                + "<p>Haz clic en el enlace a continuación para restablecer tu contraseña:</p>"
-                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + user.getPasswordResetCode() + "</p>"
-                + "</body></html>";
-
-        try {
-            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-        } catch (MessagingException e) {
-            throw new IllegalArgumentException("Error enviando email: " + e.getMessage());
-        }
-    }
 }
