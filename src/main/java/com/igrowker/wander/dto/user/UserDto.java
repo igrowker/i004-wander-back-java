@@ -5,13 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LoginResponse {
-    private String idUser;
-    private String token;
-    private Long expiresIn;
-    private UserDto user;
+public class UserDto {
+    private String name;
+    private String email;
+    private String role;
+    private List<String> preferences;
+    private String location;
 }
