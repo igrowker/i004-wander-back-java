@@ -123,4 +123,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 	    return experienceRepository.save(existingExperience);
 	}
 
+	@Override
+	public List<ExperienceEntity> getExperiencesByTag(String tag) {
+	    return experienceRepository.findByTagsContaining(tag);
+	}
+
 }
