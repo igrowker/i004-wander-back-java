@@ -3,6 +3,7 @@ package com.igrowker.wander.entity;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "reviews") 
+@Document(collection = "reviews")
+@CompoundIndex(name = "experience_createdAt_idx", def = "{'experienceId': 1, 'createdAt': -1}")
 public class ReviewEntity {
 
 	@Id

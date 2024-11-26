@@ -10,5 +10,6 @@ import com.igrowker.wander.entity.ReviewEntity;
 @EnableMongoRepositories(basePackages = "com.igrowker.wander.repository")
 public interface ReviewRepository extends MongoRepository<ReviewEntity, String>{
 
+    List<ReviewEntity> findByExperienceIdOrderByCreatedAtDesc(String experienceId);
     List<ReviewEntity> findByExperienceId(String experienceId);
 }
