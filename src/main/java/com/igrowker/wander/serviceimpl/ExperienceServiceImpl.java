@@ -1,7 +1,11 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.igrowker.wander.dto.experience.ResponseExperienceDto;
+import com.igrowker.wander.exception.ResourceNotFoundException;
+import com.igrowker.wander.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Autowired
 	private ExperienceRepository experienceRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override 
 	public ExperienceEntity createExperience(RequestExperienceDto requestExperienceDto, User user) {
@@ -135,4 +142,37 @@ public class ExperienceServiceImpl implements ExperienceService {
 	    }
 	    return experienceRepository.findByTagsIn(tags);
 	}
+
+	@Override
+	public List<ResponseExperienceDto> getExperiencesByHost(String hostId) {
+		userRepository.findById(hostId)
+				.orElseThrow(() -> new ResourceNotFoundException("Host with id: " + hostId + " not found"));
+
+		List<ExperienceEntity> experiences = experienceRepository.findByHostId(hostId);
+
+		List<ResponseExperienceDto> dtos = new ArrayList<>();
+		for (ExperienceEntity experience : experiences) {
+			dtos.add(convertToResponseDto(experience));
+		}
+		return dtos;
+	}
+
+	private ResponseExperienceDto convertToResponseDto(ExperienceEntity experience) {
+		return new ResponseExperienceDto(
+				experience.getId(),
+				experience.getTitle(),
+				experience.getDescription(),
+				experience.getLocation(),
+				experience.getHostId(),
+				experience.getPrice(),
+				experience.getAvailabilityDates(),
+				experience.getTags(),
+				experience.getRating(),
+				experience.getCapacity(),
+				experience.getCreatedAt(),
+				experience.isStatus()
+		);
+	}
+
+
 }
