@@ -1,29 +1,35 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.igrowker.wander.dto.booking.RequestBookingDto;
 import com.igrowker.wander.dto.booking.RequestUpdateBookingDto;
 import com.igrowker.wander.dto.booking.ResponseBookingDto;
+
 import com.igrowker.wander.entity.BookingEntity;
 import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
+
 import com.igrowker.wander.exception.InvalidUserCredentialsException;
 import com.igrowker.wander.exception.ResourceNotFoundException;
 import com.igrowker.wander.repository.BookingRepository;
 import com.igrowker.wander.repository.ExperienceRepository;
 import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.service.BookingService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -66,12 +72,13 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if ("TOURIST".equalsIgnoreCase(user.getRole())) {
+        if("TOURIST".equalsIgnoreCase(user.getRole())){
             if (requestDto.getStatus() != BookingStatus.CANCELLED) {
                 throw new IllegalArgumentException("Tourists can only cancel bookings.");
             }
             booking.setStatus(BookingStatus.CANCELLED);
-        } else if ("PROVIDER".equalsIgnoreCase(user.getRole())) {
+        }
+        else if ("PROVIDER".equalsIgnoreCase(user.getRole())) {
             if (requestDto.getStatus() == null ||
                     !(requestDto.getStatus() == BookingStatus.CANCELLED ||
                             requestDto.getStatus() == BookingStatus.CONFIRMED ||
@@ -88,7 +95,6 @@ public class BookingServiceImpl implements BookingService {
         return convertToResponseDto(updatedBooking);
     }
 
-
     @Override
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
@@ -102,8 +108,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         BookingEntity booking = new BookingEntity();
-        booking.setExperienceId(experience);
-        booking.setUserId(user);
+        booking.setExperienceId(experience.getId());
+        booking.setUserId(user.getId());
         booking.setBookingDate(requestBookingDto.getBookingDate());
         booking.setParticipants(requestBookingDto.getParticipants());
         booking.setTotalPrice(calculateTotalPrice(experience, requestBookingDto.getParticipants()));
@@ -124,21 +130,31 @@ public class BookingServiceImpl implements BookingService {
                 experience.getCapacity() >= participants;
     }
 
+
     private double calculateTotalPrice(ExperienceEntity experience, int participants) {
         return experience.getPrice() * participants;
     }
 
+    private BookingEntity convertToEntity(RequestBookingDto dto) {
+        BookingEntity booking = new BookingEntity();
+        booking.setExperienceId(dto.getExperienceId());
+        booking.setUserId(dto.getUserId());
+        booking.setBookingDate(dto.getBookingDate());
+        booking.setParticipants(dto.getParticipants());
+        return booking;
+    }
+
     private ResponseBookingDto convertToResponseDto(BookingEntity booking) {
-        ResponseBookingDto responseDto = new ResponseBookingDto();
-        responseDto.setId(booking.getId());
-        responseDto.setExperienceId(booking.getExperienceId().getId());
-        responseDto.setUserId(booking.getUserId().getId());
-        responseDto.setStatus(booking.getStatus());
-        responseDto.setBookingDate(booking.getBookingDate());
-        responseDto.setTotalPrice(booking.getTotalPrice());
-        responseDto.setParticipants(booking.getParticipants());
-        responseDto.setPaymentStatus(booking.getPaymentStatus());
-        responseDto.setCreatedAt(booking.getCreatedAt());
-        return responseDto;
+        return ResponseBookingDto.builder()
+                .id(booking.getId())
+                .experienceId(booking.getExperienceId())
+                .userId(booking.getUserId())
+                .status(booking.getStatus())
+                .bookingDate(booking.getBookingDate())
+                .totalPrice(booking.getTotalPrice())
+                .participants(booking.getParticipants())
+                .paymentStatus(booking.getPaymentStatus())
+                .createdAt(booking.getCreatedAt())
+                .build();
     }
 }

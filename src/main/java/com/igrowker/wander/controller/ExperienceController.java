@@ -40,18 +40,17 @@ public class ExperienceController {
 
 	@GetMapping
 	public ResponseEntity<List<ExperienceEntity>> getExperiences(
-	        @RequestParam(required = false) List<String> location,
+	        @RequestParam(required = false) String location,
 	        @RequestParam(required = false) Double maxPrice,
 	        @RequestParam(required = false) String title) {
 	    try {
 	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
 	        return ResponseEntity.ok(experiences);
-	    } catch (IllegalArgumentException e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
+
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
@@ -79,24 +78,39 @@ public class ExperienceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-	
-	@GetMapping("/tags/{tag}")
-	public ResponseEntity<List<ExperienceEntity>> getExperiencesByTag(@PathVariable String tag) {
-	    List<ExperienceEntity> experiences = experienceService.getExperiencesByTag(tag);
-	    return ResponseEntity.ok(experiences);
+
+	@GetMapping("/latest")
+	public ResponseEntity<List<ExperienceEntity>> getLatestExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> latestExperiences = experienceService.getLatestExperiences(limit);
+			return ResponseEntity.ok(latestExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
-	
-	@GetMapping("/tags")
-	public ResponseEntity<List<ExperienceEntity>> getExperiencesByMultipleTags(
-	        @RequestParam List<String> tags) {
-	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiencesByMultipleTags(tags);
-	        return ResponseEntity.ok(experiences);
-	    } catch (IllegalArgumentException e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
+
+	@GetMapping("/top-rated")
+	public ResponseEntity<List<ExperienceEntity>> getTopRatedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> topRatedExperiences = experienceService.getTopRatedExperiences(limit);
+			return ResponseEntity.ok(topRatedExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/most-reserved")
+	public ResponseEntity<List<ExperienceEntity>> getMostReservedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> experiences = experienceService.getMostReservedExperiences(limit);
+			return ResponseEntity.ok(experiences);
+		} catch (Exception e) {
+			// Log de la excepción
+			e.printStackTrace(); // Para que aparezca en la consola
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
 }
-
