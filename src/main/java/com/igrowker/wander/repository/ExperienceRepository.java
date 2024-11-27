@@ -27,5 +27,9 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     List<ExperienceEntity> findAll();
     
     List<ExperienceEntity> findByTagsContaining(String tag);
+    
+    List<ExperienceEntity> findByTagsIn(List<String> tags);
+
+
 
 }
