@@ -1,11 +1,15 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+
 
 import com.igrowker.wander.dto.experience.ExperienceReservationCountDto;
 import com.igrowker.wander.repository.BookingRepository;
+import com.igrowker.wander.dto.experience.ResponseExperienceDto;
+import com.igrowker.wander.exception.ResourceNotFoundException;
+import com.igrowker.wander.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +31,10 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Autowired
 	private BookingRepository bookingRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
 
 	@Override 
 	public ExperienceEntity createExperience(RequestExperienceDto requestExperienceDto, User user) {
@@ -149,17 +157,11 @@ public class ExperienceServiceImpl implements ExperienceService {
 		try {
 			List<ExperienceReservationCountDto> topReserved = bookingRepository.findTopReservedExperiences(limit);
 
-			System.out.println("Raw results: " + topReserved);
-
 			List<String> experienceIds = topReserved.stream()
 					.map(ExperienceReservationCountDto::getExperienceId)
 					.collect(Collectors.toList());
 
-			System.out.println("Extracted Experience IDs: " + experienceIds);
-
 			List<ExperienceEntity> experiences = experienceRepository.findAllById(experienceIds);
-
-			System.out.println("Fetched Experiences: " + experiences);
 
 			return experiences;
 		} catch (Exception e) {
@@ -168,4 +170,46 @@ public class ExperienceServiceImpl implements ExperienceService {
 		}
 	}
 
+	public List<ExperienceEntity> getExperiencesByTag(String tag) {
+	    return experienceRepository.findByTagsContaining(tag);
+	}
+
+	@Override
+	public List<ExperienceEntity> getExperiencesByMultipleTags(List<String> tags) {
+	    if (tags == null || tags.isEmpty()) {
+	        throw new IllegalArgumentException("La lista de tags no puede estar vacía.");
+	    }
+	    return experienceRepository.findByTagsIn(tags);
+	}
+
+	@Override
+	public List<ResponseExperienceDto> getExperiencesByHost(String hostId) {
+		userRepository.findById(hostId)
+				.orElseThrow(() -> new ResourceNotFoundException("Host with id: " + hostId + " not found"));
+
+		List<ExperienceEntity> experiences = experienceRepository.findByHostId(hostId);
+
+		List<ResponseExperienceDto> dtos = new ArrayList<>();
+		for (ExperienceEntity experience : experiences) {
+			dtos.add(convertToResponseDto(experience));
+		}
+		return dtos;
+	}
+
+	private ResponseExperienceDto convertToResponseDto(ExperienceEntity experience) {
+		return new ResponseExperienceDto(
+				experience.getId(),
+				experience.getTitle(),
+				experience.getDescription(),
+				experience.getLocation(),
+				experience.getHostId(),
+				experience.getPrice(),
+				experience.getAvailabilityDates(),
+				experience.getTags(),
+				experience.getRating(),
+				experience.getCapacity(),
+				experience.getCreatedAt(),
+				experience.isStatus()
+		);
+	}
 }

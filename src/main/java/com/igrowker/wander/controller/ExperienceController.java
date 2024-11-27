@@ -1,6 +1,7 @@
 package com.igrowker.wander.controller;
 
 import com.igrowker.wander.dto.experience.RequestExperienceDto;
+import com.igrowker.wander.dto.experience.ResponseExperienceDto;
 import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.service.ExperienceService;
@@ -112,5 +113,36 @@ public class ExperienceController {
 			e.printStackTrace(); // Para que aparezca en la consola
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+	}
+	
+	@GetMapping("/tags/{tag}")
+	public ResponseEntity<List<ExperienceEntity>> getExperiencesByTag(@PathVariable String tag) {
+	    List<ExperienceEntity> experiences = experienceService.getExperiencesByTag(tag);
+	    return ResponseEntity.ok(experiences);
+	}
+	
+	@GetMapping("/tags")
+	public ResponseEntity<List<ExperienceEntity>> getExperiencesByMultipleTags(
+	        @RequestParam List<String> tags) {
+	    try {
+	        List<ExperienceEntity> experiences = experienceService.getExperiencesByMultipleTags(tags);
+	        return ResponseEntity.ok(experiences);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+
+	/**
+	 * Retrieves all experiences for a specific host
+	 *
+	 * @param hostId the identifier of the host
+	 * @return List of ResponseExperienceDto representing the experiences associated with the specified host
+	 */
+	@GetMapping("/host/{hostId}")
+	public ResponseEntity<List<ResponseExperienceDto>> getExperiencesByHost(@PathVariable String hostId) {
+		List<ResponseExperienceDto> responseDtos = experienceService.getExperiencesByHost(hostId);
+		return ResponseEntity.ok(responseDtos);
 	}
 }

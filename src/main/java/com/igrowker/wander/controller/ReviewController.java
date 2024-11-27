@@ -2,17 +2,17 @@ package com.igrowker.wander.controller;
 
 import javax.validation.Valid;
 
+import com.igrowker.wander.dto.review.ResponseReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.igrowker.wander.dto.review.RequestReviewDto;
-import com.igrowker.wander.entity.ReviewEntity;
+
 import com.igrowker.wander.service.ReviewService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
@@ -20,6 +20,18 @@ public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
+
+    /**
+     * Get all the reviews for a specific experience
+     *
+     * @param idExperience experience identifier
+     * @return list of reviews by experience id
+     */
+    @GetMapping("/experience/{idExperience}")
+    public ResponseEntity<List<ResponseReviewDto>> getReviewsByExperience(@PathVariable String idExperience) {
+        List<ResponseReviewDto> reviews = reviewService.getReviewsByExperience(idExperience);
+        return ResponseEntity.ok(reviews);
+    }
 
     /**
      * Endpoint to add a new review
