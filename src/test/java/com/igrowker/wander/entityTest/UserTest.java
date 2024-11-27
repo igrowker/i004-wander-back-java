@@ -1,4 +1,4 @@
-/*package com.igrowker.wander.entityTest;
+package com.igrowker.wander.entityTest;
 
 import com.igrowker.wander.entity.User;
 import jakarta.validation.ConstraintViolation;
@@ -108,4 +108,4 @@ public class UserTest {
         assertEquals("https://medvirturials.com/img/default-image.png", newUser.getAvatar(), "Expected default avatar URL");
         assertNotNull(newUser.getCreatedAt(), "Expected default creation date to be set");
     }
-}*/
+}
