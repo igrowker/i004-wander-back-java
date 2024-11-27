@@ -1,9 +1,10 @@
 package com.igrowker.wander.service;
 
-import jakarta.mail.MessagingException;
+import com.igrowker.wander.entity.User;
 
 public interface EmailService {
-    void sendVerificationEmail(String to, String subject, String text) throws MessagingException;
+    void sendVerificationEmail(User user);
 
-    void sendResetPasswordEmail(String to, String subject, String text) throws MessagingException;
+    void sendPasswordResetEmail(User user);
+
 }

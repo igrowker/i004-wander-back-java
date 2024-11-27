@@ -78,4 +78,11 @@ public class ExperienceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+	
+	@GetMapping("/tags/{tag}")
+	public ResponseEntity<List<ExperienceEntity>> getExperiencesByTag(@PathVariable String tag) {
+	    List<ExperienceEntity> experiences = experienceService.getExperiencesByTag(tag);
+	    return ResponseEntity.ok(experiences);
+	}
+
 }

@@ -1,7 +1,9 @@
 package com.igrowker.wander.serviceimpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.igrowker.wander.dto.review.ResponseReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,18 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Autowired
     private ExperienceRepository experienceRepository;
+
+    @Override
+    public List<ResponseReviewDto> getReviewsByExperience(String experienceId) {
+        if (experienceId == null || experienceId.isEmpty()) {
+            throw new IllegalArgumentException("Experience id can't be null or empty.");
+        }
+        List<ReviewEntity> reviews = reviewRepository.findByExperienceIdOrderByCreatedAtDesc(experienceId);
+
+        return reviews.stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public ReviewEntity addReview(@Valid RequestReviewDto reviewDto) {
@@ -48,4 +62,15 @@ public class ReviewServiceImpl implements ReviewService{
 
         return savedReview;
     }
+
+    private ResponseReviewDto convertToResponseDto(ReviewEntity review) {
+        ResponseReviewDto responseDto = new ResponseReviewDto();
+        responseDto.setId(review.getId());
+        responseDto.setUserId(review.getUserId());
+        responseDto.setRating(review.getRating());
+        responseDto.setComment(review.getComment());
+        responseDto.setCreatedAt(review.getCreatedAt());
+        return responseDto;
+    }
+
 }

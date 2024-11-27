@@ -1,6 +1,7 @@
 package com.igrowker.wander.entity;
 
-import com.igrowker.wander.enums.BookingStatus;
+import com.igrowker.wander.entity.enums.PaymentStatus;
+import com.igrowker.wander.entity.enums.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +44,8 @@ public class BookingEntity {
     @Min(value = 1, message = "At least one participant is required")
     private Integer participants;
 
-    private String paymentStatus;
+    @NotNull(message = "The payment status cannot be null.")
+    private PaymentStatus paymentStatus;
 
     private Date createdAt = new Date();
 
