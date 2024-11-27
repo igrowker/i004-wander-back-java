@@ -3,6 +3,7 @@ package com.igrowker.wander.serviceimpl;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.security.JwtService;
+import com.igrowker.wander.service.AwsService;
 import com.igrowker.wander.service.UploadAvatarService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,12 +21,13 @@ public class UploadAvatarServiceImpl implements UploadAvatarService {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtService jwtService;
+    private AwsService awsService;
 
-    public boolean setAvatar(MultipartFile imageUrl) {
+    public boolean setAvatar(String bucketName, String filePath, MultipartFile imageFile) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(user.getUsername());
         //Optional<User> user = userRepository.findByEmail(email);
+        awsService.uploadFile(bucketName, filePath, imageFile);
         try {
            if (user.isEnabled()) {
                 /*User userEntity = user.get();

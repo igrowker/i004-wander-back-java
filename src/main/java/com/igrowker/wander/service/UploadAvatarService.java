@@ -4,5 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadAvatarService {
 
-    boolean setAvatar(MultipartFile imageFile);
+    boolean setAvatar(String bucketName, String filePath, MultipartFile imageFile);
 }

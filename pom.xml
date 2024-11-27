@@ -123,6 +123,13 @@
 			<version>2.6.0</version>
 		</dependency>
 
+		<!-- AWS -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.21.32</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

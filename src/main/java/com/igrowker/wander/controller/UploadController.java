@@ -16,7 +16,7 @@ public class UploadController {
     private UploadAvatarService uploadAvatarService;
 
     @PostMapping(value = "/upload-avatar", consumes = "multipart/form-data")
-    public ResponseEntity<String> uploadAvatar(@RequestParam("image") MultipartFile imageFile) {
+    public ResponseEntity<String> uploadAvatar(@RequestParam("bucketName") String bucketName, @RequestParam("filePath") String filePath, @RequestParam("image") MultipartFile imageFile) {
         try {
             if (imageFile.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El archivo está vacío.");
@@ -27,7 +27,8 @@ public class UploadController {
             if (!"image/png".equals(contentType) && !"image/jpeg".equals(contentType))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Solo se permiten archivos PNG o JPG.");
 
-            System.out.println("El usuario pudo cargar la imagen: " + uploadAvatarService.setAvatar(imageFile));
+            System.out.println("El usuario pudo cargar la imagen: " + uploadAvatarService.setAvatar(bucketName, filePath, imageFile));
+
             return ResponseEntity.status(HttpStatus.CREATED).body("El archivo se ha subido correctamente.");
 
         } catch (Exception e) {
