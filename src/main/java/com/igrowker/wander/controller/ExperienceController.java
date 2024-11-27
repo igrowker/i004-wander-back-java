@@ -84,5 +84,17 @@ public class ExperienceController {
 	    List<ExperienceEntity> experiences = experienceService.getExperiencesByTag(tag);
 	    return ResponseEntity.ok(experiences);
 	}
-
+	
+	@GetMapping("/tags")
+	public ResponseEntity<List<ExperienceEntity>> getExperiencesByMultipleTags(
+	        @RequestParam List<String> tags) {
+	    try {
+	        List<ExperienceEntity> experiences = experienceService.getExperiencesByMultipleTags(tags);
+	        return ResponseEntity.ok(experiences);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
 }

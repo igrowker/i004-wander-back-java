@@ -128,4 +128,11 @@ public class ExperienceServiceImpl implements ExperienceService {
 	    return experienceRepository.findByTagsContaining(tag);
 	}
 
+	@Override
+	public List<ExperienceEntity> getExperiencesByMultipleTags(List<String> tags) {
+	    if (tags == null || tags.isEmpty()) {
+	        throw new IllegalArgumentException("La lista de tags no puede estar vacía.");
+	    }
+	    return experienceRepository.findByTagsIn(tags);
+	}
 }
