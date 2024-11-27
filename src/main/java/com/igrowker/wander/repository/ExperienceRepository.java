@@ -30,6 +30,6 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     
     List<ExperienceEntity> findByTagsIn(List<String> tags);
 
-
+    List<ExperienceEntity> findByHostId(String hostId);
 
 }
