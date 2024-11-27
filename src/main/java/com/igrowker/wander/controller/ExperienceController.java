@@ -78,4 +78,39 @@ public class ExperienceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+
+	@GetMapping("/latest")
+	public ResponseEntity<List<ExperienceEntity>> getLatestExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> latestExperiences = experienceService.getLatestExperiences(limit);
+			return ResponseEntity.ok(latestExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/top-rated")
+	public ResponseEntity<List<ExperienceEntity>> getTopRatedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> topRatedExperiences = experienceService.getTopRatedExperiences(limit);
+			return ResponseEntity.ok(topRatedExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/most-reserved")
+	public ResponseEntity<List<ExperienceEntity>> getMostReservedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> experiences = experienceService.getMostReservedExperiences(limit);
+			return ResponseEntity.ok(experiences);
+		} catch (Exception e) {
+			// Log de la excepción
+			e.printStackTrace(); // Para que aparezca en la consola
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
 }

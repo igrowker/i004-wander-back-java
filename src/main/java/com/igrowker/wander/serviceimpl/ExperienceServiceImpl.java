@@ -1,8 +1,14 @@
 package com.igrowker.wander.serviceimpl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.igrowker.wander.dto.experience.ExperienceReservationCountDto;
+import com.igrowker.wander.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Autowired
 	private ExperienceRepository experienceRepository;
+
+	@Autowired
+	private BookingRepository bookingRepository;
 
 	@Override 
 	public ExperienceEntity createExperience(RequestExperienceDto requestExperienceDto, User user) {
@@ -121,6 +130,42 @@ public class ExperienceServiceImpl implements ExperienceService {
 	    }
 
 	    return experienceRepository.save(existingExperience);
+	}
+
+	@Override
+	public List<ExperienceEntity> getLatestExperiences(int limit) {
+		Pageable pageable = PageRequest.of(0, limit);
+		return experienceRepository.findAllByOrderByCreatedAtDesc(pageable);
+	}
+
+	@Override
+	public List<ExperienceEntity> getTopRatedExperiences(int limit) {
+		Pageable pageable = PageRequest.of(0, limit);
+		return experienceRepository.findAllByOrderByRatingDesc(pageable);
+	}
+
+	@Override
+	public List<ExperienceEntity> getMostReservedExperiences(int limit) {
+		try {
+			List<ExperienceReservationCountDto> topReserved = bookingRepository.findTopReservedExperiences(limit);
+
+			System.out.println("Raw results: " + topReserved);
+
+			List<String> experienceIds = topReserved.stream()
+					.map(ExperienceReservationCountDto::getExperienceId)
+					.collect(Collectors.toList());
+
+			System.out.println("Extracted Experience IDs: " + experienceIds);
+
+			List<ExperienceEntity> experiences = experienceRepository.findAllById(experienceIds);
+
+			System.out.println("Fetched Experiences: " + experiences);
+
+			return experiences;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error retrieving most reserved experiences", e);
+		}
 	}
 
 }

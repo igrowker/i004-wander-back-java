@@ -16,18 +16,20 @@ import com.igrowker.wander.repository.BookingRepository;
 import com.igrowker.wander.repository.ExperienceRepository;
 import com.igrowker.wander.repository.UserRepository;
 import com.igrowker.wander.service.BookingService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
@@ -93,7 +95,6 @@ public class BookingServiceImpl implements BookingService {
         return convertToResponseDto(updatedBooking);
     }
 
-
     @Override
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
@@ -107,8 +108,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         BookingEntity booking = new BookingEntity();
-        booking.setExperienceId(experience);
-        booking.setUserId(user);
+        booking.setExperienceId(experience.getId());
+        booking.setUserId(user.getId());
         booking.setBookingDate(requestBookingDto.getBookingDate());
         booking.setParticipants(requestBookingDto.getParticipants());
         booking.setTotalPrice(calculateTotalPrice(experience, requestBookingDto.getParticipants()));
@@ -129,21 +130,31 @@ public class BookingServiceImpl implements BookingService {
                 experience.getCapacity() >= participants;
     }
 
+
     private double calculateTotalPrice(ExperienceEntity experience, int participants) {
         return experience.getPrice() * participants;
     }
 
+    private BookingEntity convertToEntity(RequestBookingDto dto) {
+        BookingEntity booking = new BookingEntity();
+        booking.setExperienceId(dto.getExperienceId());
+        booking.setUserId(dto.getUserId());
+        booking.setBookingDate(dto.getBookingDate());
+        booking.setParticipants(dto.getParticipants());
+        return booking;
+    }
+
     private ResponseBookingDto convertToResponseDto(BookingEntity booking) {
-        ResponseBookingDto responseDto = new ResponseBookingDto();
-        responseDto.setId(booking.getId());
-        responseDto.setExperienceId(booking.getExperienceId().getId());
-        responseDto.setUserId(booking.getUserId().getId());
-        responseDto.setStatus(booking.getStatus());
-        responseDto.setBookingDate(booking.getBookingDate());
-        responseDto.setTotalPrice(booking.getTotalPrice());
-        responseDto.setParticipants(booking.getParticipants());
-        responseDto.setPaymentStatus(booking.getPaymentStatus());
-        responseDto.setCreatedAt(booking.getCreatedAt());
-        return responseDto;
+        return ResponseBookingDto.builder()
+                .id(booking.getId())
+                .experienceId(booking.getExperienceId())
+                .userId(booking.getUserId())
+                .status(booking.getStatus())
+                .bookingDate(booking.getBookingDate())
+                .totalPrice(booking.getTotalPrice())
+                .participants(booking.getParticipants())
+                .paymentStatus(booking.getPaymentStatus())
+                .createdAt(booking.getCreatedAt())
+                .build();
     }
 }
