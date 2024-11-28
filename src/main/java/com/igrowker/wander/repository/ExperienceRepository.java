@@ -25,16 +25,16 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     List<ExperienceEntity> findByCity(String city);
 
     // Métodos para búsqueda por país en el campo location
-    @Query("{ 'location.2': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
+    @Query("{ 'location.0': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
     List<ExperienceEntity> findByCountryAndPriceLessThanEqualAndTitleContaining(String country, Double maxPrice, String title);
 
-    @Query("{ 'location.2': ?0, 'price': { $lte: ?1 } }")
+    @Query("{ 'location.0': ?0, 'price': { $lte: ?1 } }")
     List<ExperienceEntity> findByCountryAndPriceLessThanEqual(String country, Double maxPrice);
 
-    @Query("{ 'location.2': ?0, 'title': { $regex: ?1, $options: 'i' } }")
+    @Query("{ 'location.0': ?0, 'title': { $regex: ?1, $options: 'i' } }")
     List<ExperienceEntity> findByCountryAndTitleContaining(String country, String title);
 
-    @Query("{ 'location.2': ?0 }")
+    @Query("{ 'location.0': ?0 }")
     List<ExperienceEntity> findByCountry(String country);
 
     // Métodos relacionados con ubicación completa
