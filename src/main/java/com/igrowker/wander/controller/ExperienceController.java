@@ -44,9 +44,6 @@ public class ExperienceController {
 	        @RequestParam(required = false) Double maxPrice,
 	        @RequestParam(required = false) String title) {
 	    try {
-	        String city = (location != null && location.size() > 1) ? location.get(location.size() - 2) : null;
-	        String country = (location != null && location.size() > 2) ? location.get(location.size() - 1) : null;
-
 	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
 	        return ResponseEntity.ok(experiences);
 	    } catch (IllegalArgumentException e) {
