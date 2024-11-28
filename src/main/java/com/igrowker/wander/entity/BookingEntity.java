@@ -22,13 +22,11 @@ public class BookingEntity {
     @Id
     private String id;
 
-    @DBRef
     @NotNull(message = "Experience is required")
-    private ExperienceEntity experienceId;
+    private String experienceId;
 
-    @DBRef
     @NotNull(message = "User is required")
-    private User userId;
+    private String userId;
 
     @NotNull(message = "Status is required")
     private BookingStatus status;
