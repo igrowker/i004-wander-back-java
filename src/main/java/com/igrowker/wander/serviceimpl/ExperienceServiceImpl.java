@@ -1,8 +1,18 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+
+import com.igrowker.wander.dto.experience.ExperienceReservationCountDto;
+import com.igrowker.wander.repository.BookingRepository;
+import com.igrowker.wander.dto.experience.ResponseExperienceDto;
+import com.igrowker.wander.exception.ResourceNotFoundException;
+import com.igrowker.wander.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +28,13 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Autowired
 	private ExperienceRepository experienceRepository;
+
+	@Autowired
+	private BookingRepository bookingRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
 
 	@Override 
 	public ExperienceEntity createExperience(RequestExperienceDto requestExperienceDto, User user) {
@@ -124,8 +141,75 @@ public class ExperienceServiceImpl implements ExperienceService {
 	}
 
 	@Override
+	public List<ExperienceEntity> getLatestExperiences(int limit) {
+		Pageable pageable = PageRequest.of(0, limit);
+		return experienceRepository.findAllByOrderByCreatedAtDesc(pageable);
+	}
+
+	@Override
+	public List<ExperienceEntity> getTopRatedExperiences(int limit) {
+		Pageable pageable = PageRequest.of(0, limit);
+		return experienceRepository.findAllByOrderByRatingDesc(pageable);
+	}
+
+	@Override
+	public List<ExperienceEntity> getMostReservedExperiences(int limit) {
+		try {
+			List<ExperienceReservationCountDto> topReserved = bookingRepository.findTopReservedExperiences(limit);
+
+			List<String> experienceIds = topReserved.stream()
+					.map(ExperienceReservationCountDto::getExperienceId)
+					.collect(Collectors.toList());
+
+			List<ExperienceEntity> experiences = experienceRepository.findAllById(experienceIds);
+
+			return experiences;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error retrieving most reserved experiences", e);
+		}
+	}
+
 	public List<ExperienceEntity> getExperiencesByTag(String tag) {
 	    return experienceRepository.findByTagsContaining(tag);
 	}
 
+	@Override
+	public List<ExperienceEntity> getExperiencesByMultipleTags(List<String> tags) {
+	    if (tags == null || tags.isEmpty()) {
+	        throw new IllegalArgumentException("La lista de tags no puede estar vacía.");
+	    }
+	    return experienceRepository.findByTagsIn(tags);
+	}
+
+	@Override
+	public List<ResponseExperienceDto> getExperiencesByHost(String hostId) {
+		userRepository.findById(hostId)
+				.orElseThrow(() -> new ResourceNotFoundException("Host with id: " + hostId + " not found"));
+
+		List<ExperienceEntity> experiences = experienceRepository.findByHostId(hostId);
+
+		List<ResponseExperienceDto> dtos = new ArrayList<>();
+		for (ExperienceEntity experience : experiences) {
+			dtos.add(convertToResponseDto(experience));
+		}
+		return dtos;
+	}
+
+	private ResponseExperienceDto convertToResponseDto(ExperienceEntity experience) {
+		return new ResponseExperienceDto(
+				experience.getId(),
+				experience.getTitle(),
+				experience.getDescription(),
+				experience.getLocation(),
+				experience.getHostId(),
+				experience.getPrice(),
+				experience.getAvailabilityDates(),
+				experience.getTags(),
+				experience.getRating(),
+				experience.getCapacity(),
+				experience.getCreatedAt(),
+				experience.isStatus()
+		);
+	}
 }

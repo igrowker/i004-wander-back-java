@@ -3,7 +3,9 @@ package com.igrowker.wander.controller;
 import com.igrowker.wander.dto.booking.RequestBookingDto;
 import com.igrowker.wander.dto.booking.RequestUpdateBookingDto;
 import com.igrowker.wander.dto.booking.ResponseBookingDto;
+import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.service.BookingService;
+import com.igrowker.wander.service.ExperienceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,9 @@ public class BookingController {
 
     @Autowired
     private BookingService bookingService;
+
+    @Autowired
+    private ExperienceService experienceService;
 
     /**
      * get details of a booking by id
@@ -80,6 +85,8 @@ public class BookingController {
      * @param requestBookingDto the DTO containing a new booking
      * @return a ResponseEntity containing the new booking created
      */
+
+
     @PostMapping
     public ResponseEntity<ResponseBookingDto> createBooking(@Valid @RequestBody RequestBookingDto requestBookingDto) {
         ResponseBookingDto responseBookingDto = bookingService.createBooking(requestBookingDto);
