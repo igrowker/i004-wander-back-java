@@ -119,6 +119,23 @@ public class AuthServiceImpl implements AuthService {
 
         return responseUserDto;
     }
+    
+    @Transactional
+    @Override
+    public void resendVerificationCode(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+
+        if (user.isEnabled()) {
+            throw new InvalidDataException("La cuenta ya está verificada.");
+        }
+
+        user.setVerificationCode(generateVerificationCode());
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+
+        userRepository.save(user);
+        emailService.sendVerificationEmail(user);
+    }
 
     @Transactional
     @Override
