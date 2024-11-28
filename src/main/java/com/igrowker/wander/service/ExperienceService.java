@@ -15,7 +15,13 @@ public interface ExperienceService {
     ExperienceEntity getExperienceById(String id);
 
     ExperienceEntity updateExperience(String id, ExperienceEntity updatedExperience);
-    
+
+    List<ExperienceEntity> getLatestExperiences(int limit);
+
+    List<ExperienceEntity> getTopRatedExperiences(int limit);
+
+    List<ExperienceEntity> getMostReservedExperiences(int limit);
+
     List<ExperienceEntity> getExperiencesByTag(String tag);
     
     List<ExperienceEntity> getExperiencesByMultipleTags(List<String> tags);
