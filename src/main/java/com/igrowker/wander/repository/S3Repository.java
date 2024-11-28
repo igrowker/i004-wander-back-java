@@ -1,11 +1,7 @@
 package com.igrowker.wander.repository;
 
-import org.springframework.stereotype.Repository;
+import com.igrowker.wander.entity.AmazonImage;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.io.File;
-
-@Repository
-public interface S3Repository {
-
-    String uploadFile(String bucketName, String fileName, File fileObj);
+public interface S3Repository extends MongoRepository<AmazonImage, String> {
 }

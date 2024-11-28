@@ -1,12 +1,17 @@
 package com.igrowker.wander.config;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class AmazonS3Config {
+
+    private AmazonS3 amazonS3Client;
 
     @Value("${aws.s3.access-key}")
     private String accessKey;
@@ -17,12 +22,30 @@ public class AmazonS3Config {
     @Value("${aws.s3.region}")
     private String region;
 
-    @Bean
-    public S3Client s3Client() {
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
-        return S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(() -> credentials)
-                .build();
+    @Value("${aws.s3.bucket-name}")
+    private String bucketName;
+
+    @Value("${aws.s3.url}")
+    private String url;
+
+    public AmazonS3 getClient() {
+        return amazonS3Client;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    @PostConstruct
+    private void init() {
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        this.amazonS3Client = AmazonS3ClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .build();
     }
 }
