@@ -93,7 +93,7 @@ public class ExperienceServiceImpl implements ExperienceService {
             return experienceRepository.findByTitleContaining(title);
         }
 
-        // Sin filtros, devuelve todas las experiencias
+        // Sin filtros, devuelve todas las experiencias.
         return experienceRepository.findAll();
     }
 
