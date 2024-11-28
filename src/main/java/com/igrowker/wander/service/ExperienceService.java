@@ -9,7 +9,9 @@ import com.igrowker.wander.entity.User;
 public interface ExperienceService {
 	ExperienceEntity createExperience(RequestExperienceDto experience, User user);
     
-    List<ExperienceEntity> getExperiences(String location, Double maxPrice, String title);
+    List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title);
+    
+    List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice);
 
     ExperienceEntity getExperienceById(String id);
 
