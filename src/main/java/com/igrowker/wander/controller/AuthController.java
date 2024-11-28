@@ -67,6 +67,12 @@ public class AuthController {
         authService.resetPassword(request.get("email"),request.get("code"), request.get("newPassword"));
         return ResponseEntity.ok("Contraseña restablecida con éxito");
     }
-}
+    
+    @PostMapping("/reenviar-codigo")
+    public ResponseEntity<String> resendVerificationCode(@RequestBody Map<String, String> request) {
+        authService.resendVerificationCode(request.get("email"));
+        return ResponseEntity.ok("Nuevo código de verificación enviado al correo proporcionado.");
+    }
 
+}
 
