@@ -126,7 +126,7 @@ public class ExperienceServiceImpl implements ExperienceService {
             return experienceRepository.findByPriceLessThanEqual(maxPrice);
         }
 
-        // Sin filtros, devuelve todas las experiencias
+        // Sin filtros, devuelve todas las experiencias.
         return experienceRepository.findAll();
     }
 
