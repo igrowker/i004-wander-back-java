@@ -41,8 +41,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Override
 	public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title) {
-	    String city = (location != null && location.size() > 1) ? location.get(location.size() - 2).trim() : null;
-	    String country = (location != null && location.size() > 2) ? location.get(location.size() - 1).trim() : null;
+	    String country = (location != null && location.size() > 0) ? location.get(0).trim() : null;
+	    String city = (location != null && location.size() > 1) ? location.get(1).trim() : null;
 
 	    if (city != null) {
 	        if (maxPrice != null && title != null) {
@@ -99,8 +99,8 @@ public class ExperienceServiceImpl implements ExperienceService {
 
 	@Override
 	public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice) {
-	    String city = (location != null && location.size() > 1) ? location.get(location.size() - 2).trim() : null;
-	    String country = (location != null && location.size() > 2) ? location.get(location.size() - 1).trim() : null;
+	    String country = (location != null && location.size() > 0) ? location.get(0).trim() : null;
+	    String city = (location != null && location.size() > 1) ? location.get(1).trim() : null;
 
 	    if (city != null && maxPrice != null) {
 	        return experienceRepository.findByCityAndPriceLessThanEqual(city, maxPrice);
