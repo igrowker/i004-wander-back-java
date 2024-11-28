@@ -40,16 +40,19 @@ public class ExperienceController {
 
 	@GetMapping
 	public ResponseEntity<List<ExperienceEntity>> getExperiences(
-	        @RequestParam(required = false) String location,
+	        @RequestParam(required = false) List<String> location,
 	        @RequestParam(required = false) Double maxPrice,
 	        @RequestParam(required = false) String title) {
 	    try {
 	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
 	        return ResponseEntity.ok(experiences);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
 	}
+
 
 
 	@GetMapping("/{id}")
