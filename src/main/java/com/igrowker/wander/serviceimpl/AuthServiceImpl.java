@@ -60,8 +60,8 @@ public class AuthServiceImpl implements AuthService {
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(true);
-
+        
+        user.setEnabled(false);
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
 
@@ -186,9 +186,7 @@ public class AuthServiceImpl implements AuthService {
 
             String token = authorizationHeader.substring(7);
 
-
-            jwtService.extractAllClaims(token); // Throws an exception if the token is invalid
-
+            jwtService.extractAllClaims(token); 
 
             invalidateToken(token, jwtService.extractExpiration(token));
 
@@ -217,7 +215,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void resetPassword(String mail, String code, String newPassword) {
-        // Buscar al usuario por email
+ 
         User user = userRepository.findByEmail(mail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -237,8 +235,6 @@ public class AuthServiceImpl implements AuthService {
         user.setPasswordResetCode(null);
         user.setPasswordResetCodeExpiresAt(null);
 
-
-        // Actualizar la contraseña
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
