@@ -10,8 +10,6 @@ import com.igrowker.wander.entity.ExperienceEntity;
 
 @EnableMongoRepositories(basePackages = "com.igrowker.wander.repository")
 public interface ExperienceRepository extends MongoRepository<ExperienceEntity, String> {
-
-    // Métodos para búsqueda por ciudad en el campo location
     @Query("{ 'location.1': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
     List<ExperienceEntity> findByCityAndPriceLessThanEqualAndTitleContaining(String city, Double maxPrice, String title);
 
@@ -24,7 +22,6 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     @Query("{ 'location.1': ?0 }")
     List<ExperienceEntity> findByCity(String city);
 
-    // Métodos para búsqueda por país en el campo location
     @Query("{ 'location.0': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
     List<ExperienceEntity> findByCountryAndPriceLessThanEqualAndTitleContaining(String country, Double maxPrice, String title);
 
@@ -37,7 +34,6 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     @Query("{ 'location.0': ?0 }")
     List<ExperienceEntity> findByCountry(String country);
 
-    // Métodos relacionados con ubicación completa
     List<ExperienceEntity> findByLocationContainsAndPriceLessThanEqualAndTitleContaining(List<String> location, Double maxPrice, String title);
 
     List<ExperienceEntity> findByLocationContainsAndPriceLessThanEqual(List<String> location, Double maxPrice);
@@ -46,18 +42,15 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
 
     List<ExperienceEntity> findByLocationContains(List<String> location);
 
-    // Métodos relacionados con precio y título
     List<ExperienceEntity> findByPriceLessThanEqualAndTitleContaining(Double maxPrice, String title);
 
     List<ExperienceEntity> findByTitleContaining(String title);
 
     List<ExperienceEntity> findByPriceLessThanEqual(Double maxPrice);
 
-    // Métodos para tags
     List<ExperienceEntity> findByTagsContaining(String tag);
 
     List<ExperienceEntity> findByTagsIn(List<String> tags);
 
-    // General
     List<ExperienceEntity> findAll();
 }
