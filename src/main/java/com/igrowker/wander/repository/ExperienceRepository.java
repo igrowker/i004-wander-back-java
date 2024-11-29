@@ -2,6 +2,7 @@ package com.igrowker.wander.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -51,6 +52,18 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     List<ExperienceEntity> findByTagsContaining(String tag);
 
     List<ExperienceEntity> findByTagsIn(List<String> tags);
+
+    List<ExperienceEntity> findAll();
+
+    List<ExperienceEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    List<ExperienceEntity> findAllByOrderByRatingDesc(Pageable pageable);
+    
+    List<ExperienceEntity> findByTagsContaining(String tag);
+    
+    List<ExperienceEntity> findByTagsIn(List<String> tags);
+
+    List<ExperienceEntity> findByHostId(String hostId);
 
     List<ExperienceEntity> findAll();
 }

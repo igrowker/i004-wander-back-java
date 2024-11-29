@@ -1,6 +1,7 @@
 package com.igrowker.wander.controller;
 
 import com.igrowker.wander.dto.experience.RequestExperienceDto;
+import com.igrowker.wander.dto.experience.ResponseExperienceDto;
 import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.service.ExperienceService;
@@ -79,6 +80,41 @@ public class ExperienceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+
+	@GetMapping("/latest")
+	public ResponseEntity<List<ExperienceEntity>> getLatestExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> latestExperiences = experienceService.getLatestExperiences(limit);
+			return ResponseEntity.ok(latestExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/top-rated")
+	public ResponseEntity<List<ExperienceEntity>> getTopRatedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> topRatedExperiences = experienceService.getTopRatedExperiences(limit);
+			return ResponseEntity.ok(topRatedExperiences);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GetMapping("/most-reserved")
+	public ResponseEntity<List<ExperienceEntity>> getMostReservedExperiences(
+			@RequestParam(defaultValue = "5") int limit) {
+		try {
+			List<ExperienceEntity> experiences = experienceService.getMostReservedExperiences(limit);
+			return ResponseEntity.ok(experiences);
+		} catch (Exception e) {
+			// Log de la excepción
+			e.printStackTrace(); // Para que aparezca en la consola
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
 	
 	@GetMapping("/tags/{tag}")
 	public ResponseEntity<List<ExperienceEntity>> getExperiencesByTag(@PathVariable String tag) {
@@ -97,6 +133,18 @@ public class ExperienceController {
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
+	}
+
+	/**
+	 * Retrieves all experiences for a specific host
+	 *
+	 * @param hostId the identifier of the host
+	 * @return List of ResponseExperienceDto representing the experiences associated with the specified host
+	 */
+	@GetMapping("/host/{hostId}")
+	public ResponseEntity<List<ResponseExperienceDto>> getExperiencesByHost(@PathVariable String hostId) {
+		List<ResponseExperienceDto> responseDtos = experienceService.getExperiencesByHost(hostId);
+		return ResponseEntity.ok(responseDtos);
 	}
 }
 

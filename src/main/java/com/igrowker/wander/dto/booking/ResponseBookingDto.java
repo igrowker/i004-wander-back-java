@@ -4,6 +4,7 @@ import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ResponseBookingDto {
     private String id;
     private String experienceId;
