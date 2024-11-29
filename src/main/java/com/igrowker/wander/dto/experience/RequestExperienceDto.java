@@ -22,8 +22,9 @@ public class RequestExperienceDto {
     @NotBlank(message= "La descripción de la experiencia es obligatoria y debe tener entre 10 y 500 caracteres.")
     private String description;
 
-    @NotBlank(message= "La ubicación de la experiencia es obligatoria.")
-    private String location;
+    @NotNull(message = "La ubicación de la experiencia es obligatoria.")
+    @Size(min = 1, message = "Debe proporcionar al menos un campo de ubicación.")
+    private List<@NotBlank(message = "Cada elemento de la ubicación debe ser un texto válido.") String> location;
 
     @NotBlank
     private String hostId; 

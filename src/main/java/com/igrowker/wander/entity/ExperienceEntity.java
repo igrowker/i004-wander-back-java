@@ -24,7 +24,7 @@ public class ExperienceEntity {
 
     private String description;
 
-    private String location;
+    private List<String> location;
 
     @Field("hostId") 
     private String hostId; 
