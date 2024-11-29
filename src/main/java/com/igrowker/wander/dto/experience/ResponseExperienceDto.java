@@ -14,7 +14,7 @@ public class ResponseExperienceDto {
     private String id;
     private String title;
     private String description;
-    private String location;
+    List<String> location;
     private String hostId;
     private Double price;
     private List<String> availabilityDates;
