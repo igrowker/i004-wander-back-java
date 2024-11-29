@@ -49,12 +49,6 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
 
     List<ExperienceEntity> findByPriceLessThanEqual(Double maxPrice);
 
-    List<ExperienceEntity> findByTagsContaining(String tag);
-
-    List<ExperienceEntity> findByTagsIn(List<String> tags);
-
-    List<ExperienceEntity> findAll();
-
     List<ExperienceEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<ExperienceEntity> findAllByOrderByRatingDesc(Pageable pageable);
