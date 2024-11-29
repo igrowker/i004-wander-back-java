@@ -22,6 +22,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Override
+    public UserDto getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("El usuario no está autenticado");
+        }
+
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User existingUser = userRepository.findByEmail(authenticatedUser.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró usuario con email: " + authenticatedUser.getEmail()));
+
+        return convertToUserDto(existingUser);
+    }
+
     /**
      * Updates a user's profile in the database.
      *

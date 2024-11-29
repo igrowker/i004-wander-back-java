@@ -5,17 +5,25 @@ import com.igrowker.wander.dto.user.UserDto;
 import com.igrowker.wander.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    /**
+     * get user profile
+     *
+     * @return UserDto with user profile data
+     */
+    @GetMapping("/profile")
+    public ResponseEntity<UserDto> getUserProfile() {
+        UserDto userDto = userService.getUserProfile();
+        return ResponseEntity.ok(userDto);
+    }
 
     /**
      * Update the authenticated user's profile
