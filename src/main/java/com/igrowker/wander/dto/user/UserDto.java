@@ -17,4 +17,5 @@ public class UserDto {
     private String role;
     private List<String> preferences;
     private String location;
+    private String phone;
 }

@@ -48,6 +48,8 @@ public class User implements UserDetails {
 
     private String location;
 
+    private String phone;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private List<Long> bookings;
