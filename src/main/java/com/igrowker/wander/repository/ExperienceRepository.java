@@ -58,12 +58,7 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     List<ExperienceEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<ExperienceEntity> findAllByOrderByRatingDesc(Pageable pageable);
-    
-    List<ExperienceEntity> findByTagsContaining(String tag);
-    
-    List<ExperienceEntity> findByTagsIn(List<String> tags);
 
     List<ExperienceEntity> findByHostId(String hostId);
 
-    List<ExperienceEntity> findAll();
 }
