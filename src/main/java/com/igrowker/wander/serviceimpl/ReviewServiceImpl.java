@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.igrowker.wander.dto.review.ResponseReviewDto;
+import com.igrowker.wander.entity.User;
+import com.igrowker.wander.exception.InvalidUserCredentialsException;
+import com.igrowker.wander.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.igrowker.wander.dto.review.RequestReviewDto;
@@ -62,6 +66,26 @@ public class ReviewServiceImpl implements ReviewService{
 
         return savedReview;
     }
+
+    @Override
+    public ResponseReviewDto deleteReview(String id) {
+        ReviewEntity review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró reseña con id: " + id));
+
+        User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!review.getUserId().equals(authenticatedUser.getId())) {
+            throw new IllegalArgumentException("Solo puedes eliminar tus propias reseñas");
+        }
+
+        if (authenticatedUser.getRole().equals("PROVIDER")) {
+            throw new InvalidUserCredentialsException("Proveedores no pueden eliminar reseñas");
+        }
+
+        reviewRepository.delete(review);
+        return convertToResponseDto(review);
+    }
+
 
     private ResponseReviewDto convertToResponseDto(ReviewEntity review) {
         ResponseReviewDto responseDto = new ResponseReviewDto();
