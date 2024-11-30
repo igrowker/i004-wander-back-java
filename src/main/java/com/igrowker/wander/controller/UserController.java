@@ -1,39 +1,41 @@
 package com.igrowker.wander.controller;
 
-import com.igrowker.wander.entity.User;
+import com.igrowker.wander.dto.user.RequestUpdateUserDto;
+import com.igrowker.wander.dto.user.UserDto;
 import com.igrowker.wander.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
     /**
+     * get user profile
+     *
+     * @return UserDto with user profile data
+     */
+    @GetMapping("/profile")
+    public ResponseEntity<UserDto> getUserProfile() {
+        UserDto userDto = userService.getUserProfile();
+        return ResponseEntity.ok(userDto);
+    }
+
+    /**
      * Update the authenticated user's profile
      * @param userUpdates user data to update
-     * @return updated user profile
+     * @return dto with updated user profile data
      */
     @PutMapping("/profile")
-    public ResponseEntity<User> updateUserProfile(
-            @RequestBody User userUpdates) {
-        try {
-            User updatedUser = userService.updateUserProfile(userUpdates);
-            return ResponseEntity.ok(updatedUser);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<UserDto> updateUserProfile(@Valid
+            @RequestBody RequestUpdateUserDto userUpdates) {
+        UserDto updatedUser = userService.updateUserProfile(userUpdates);
+        return ResponseEntity.ok(updatedUser);
     }
 
 
