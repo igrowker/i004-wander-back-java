@@ -37,7 +37,7 @@ public class ExperienceTest {
         String id = "1";
         String title = "Experience Title";
         String description = "Description of the experience";
-        String location = "New York";
+        List<String> location = Arrays.asList("United States", "New York", "40°38'43.4\"N", "73°59'57.6\"W");
         String hostId = "host123";
         Double price = 199.99;
         List<String> availabilityDates = Arrays.asList("2023-12-01", "2023-12-02");
@@ -72,7 +72,7 @@ public class ExperienceTest {
         String id = "1";
         String title = "New Experience";
         String description = "Exciting description";
-        String location = "London";
+        List<String> location = Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W");
         String hostId = "host456";
         Double price = 299.99;
         List<String> availabilityDates = Arrays.asList("2023-12-10", "2023-12-11");
@@ -114,8 +114,8 @@ public class ExperienceTest {
     @Test
     void testEqualityAndHashCode() {
         // Arrange
-        ExperienceEntity experience1 = new ExperienceEntity("1", "Title", "Description", "Location", "host123", 100.0, null, null, 4.5, 10, new Date(), true);
-        ExperienceEntity experience2 = new ExperienceEntity("1", "Title", "Description", "Location", "host123", 100.0, null, null, 4.5, 10, new Date(), true);
+        ExperienceEntity experience1 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true);
+        ExperienceEntity experience2 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true);
 
         // Act & Assert
         assertEquals(experience1, experience2);
