@@ -43,9 +43,10 @@ public class ExperienceController {
 	public ResponseEntity<List<ExperienceEntity>> getExperiences(
 	        @RequestParam(required = false) List<String> location,
 	        @RequestParam(required = false) Double maxPrice,
-	        @RequestParam(required = false) String title) {
+	        @RequestParam(required = false) String title,
+	        @RequestParam(required = false) List<String> tags) {
 	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title, tags);
 	        return ResponseEntity.ok(experiences);
 	    } catch (IllegalArgumentException e) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

@@ -55,9 +55,18 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     
     List<ExperienceEntity> findByTagsContaining(String tag);
     
-    List<ExperienceEntity> findByTagsIn(List<String> tags);
-
     List<ExperienceEntity> findByHostId(String hostId);
+   
+    @Query("{ 'location.1': ?0, 'tags': { $in: ?1 } }")
+    List<ExperienceEntity> findByCityAndTagsIn(String city, List<String> tags);
 
+    @Query("{ 'location.0': ?0, 'tags': { $in: ?1 } }")
+    List<ExperienceEntity> findByCountryAndTagsIn(String country, List<String> tags);
+
+    @Query("{ 'location': { $in: ?0 }, 'tags': { $in: ?1 } }")
+    List<ExperienceEntity> findByLocationContainsAndTagsIn(List<String> location, List<String> tags);
+
+    List<ExperienceEntity> findByTagsIn(List<String> tags);
+    
     List<ExperienceEntity> findAll();
 }
