@@ -10,4 +10,5 @@ public interface ReviewService {
 
     List<ResponseReviewDto> getReviewsByExperience(String experienceId);
     ReviewEntity addReview(RequestReviewDto review);
+    ResponseReviewDto deleteReview(String id);
 }
