@@ -54,10 +54,23 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
-    public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title) {
+    public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title, List<String> tags) {
         String country = (location != null && location.size() > 0) ? location.get(0).trim() : null;
         String city = (location != null && location.size() > 1) ? location.get(1).trim() : null;
 
+        if (tags != null && !tags.isEmpty()) {
+            if (city != null) {
+                return experienceRepository.findByCityAndTagsIn(city, tags);
+            }
+            if (country != null) {
+                return experienceRepository.findByCountryAndTagsIn(country, tags);
+            }
+            if (location != null) {
+                return experienceRepository.findByLocationContainsAndTagsIn(location, tags);
+            }
+            return experienceRepository.findByTagsIn(tags);
+        }
+        
         if (city != null) {
             if (maxPrice != null && title != null) {
                 return experienceRepository.findByCityAndPriceLessThanEqualAndTitleContaining(city, maxPrice, title);
@@ -105,8 +118,8 @@ public class ExperienceServiceImpl implements ExperienceService {
         }
         if (title != null) {
             return experienceRepository.findByTitleContaining(title);
-        }
-
+        }      
+        
         return experienceRepository.findAll();
     }
 
