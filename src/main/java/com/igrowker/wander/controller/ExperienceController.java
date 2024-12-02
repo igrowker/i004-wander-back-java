@@ -43,9 +43,10 @@ public class ExperienceController {
 	public ResponseEntity<List<ExperienceEntity>> getExperiences(
 	        @RequestParam(required = false) String location,
 	        @RequestParam(required = false) Double maxPrice,
-	        @RequestParam(required = false) String title) {
+	        @RequestParam(required = false) String title,
+	        @RequestParam(required = false) List<String> tags) {
 	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title);
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title, tags);
 	        return ResponseEntity.ok(experiences);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
