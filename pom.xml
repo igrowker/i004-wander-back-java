@@ -115,14 +115,6 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.2.5.Final</version>
 		</dependency>
-
-		<!-- AWS -->
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk</artifactId>
-			<version>${amazon-sdk.version}</version>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>
