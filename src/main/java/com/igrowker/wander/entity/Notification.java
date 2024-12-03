@@ -28,7 +28,7 @@ public class Notification {
     private String message;
 
     @NotNull
-    private boolean isRead = false;
+    private Boolean isRead = false; // Cambiado a Boolean para que pueda ser null
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
