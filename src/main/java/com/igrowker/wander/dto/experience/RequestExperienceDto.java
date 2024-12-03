@@ -1,12 +1,9 @@
 package com.igrowker.wander.dto.experience;
 
 import java.util.List;
-import jakarta.validation.constraints.Max;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,10 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestExperienceDto {
 
-    @Size(min=3, max=100, message= "El título de la experiencia es obligatorio y debe tener entre 3 y 100 caracteres.")
+    @Size(min=3, max=50, message= "El título de la experiencia es obligatorio y debe tener entre 3 y 100 caracteres.")
     private String title;
 
     @NotBlank(message= "La descripción de la experiencia es obligatoria y debe tener entre 10 y 500 caracteres.")
+    @Size(min = 10, max = 300, message = "La descripción debe tener entre 10 y 300 caracteres.")
     private String description;
 
     @NotNull(message = "La ubicación de la experiencia es obligatoria.")
@@ -27,16 +25,19 @@ public class RequestExperienceDto {
     private List<@NotBlank(message = "Cada elemento de la ubicación debe ser un texto válido.") String> location;
 
     @NotBlank
-    private String hostId; 
+    private String hostId;
 
+    @NotNull(message = "El precio es obligatorio.")
     @Min(value=1, message="El precio debe ser un valor positivo.")
     private Double price;
 
-    private List<String> availabilityDates;
+    @NotNull(message = "Las fechas de disponibilidad son obligatorias.")
+    @Size(min = 1, message = "Debe haber al menos una fecha de disponibilidad.")
+    private List<@NotBlank(message = "La fecha de disponibilidad no puede estar vacía.")
+                    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$",
+                    message = "El formato de la fecha debe ser 'yyyy-MM-dd HH:mm'.") String> availabilityDates;
 
-    private List<String> tags;
-
-    private Double rating;
+    private List<@NotBlank(message = "Cada etiqueta debe ser un texto válido.") String> tags;
 
     @NotNull(message= "La capacidad debe ser al menos 1.")
     @Min(value = 1, message = "La capacidad debe ser al menos 1.")

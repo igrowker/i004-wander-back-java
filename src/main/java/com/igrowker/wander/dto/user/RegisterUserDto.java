@@ -34,4 +34,20 @@ public class RegisterUserDto {
     private List<String> preferences;
 
     private String location;
+
+    public void setName(String name) {
+        if (name != null) {
+            this.name = name.trim();
+        } else {
+            this.name = null;
+        }
+    }
+
+    public void setRole(String role) {
+        if (role != null) {
+            this.role = role.toUpperCase();
+        } else {
+            this.role = null;
+        }
+    }
 }

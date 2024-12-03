@@ -1,5 +1,6 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,11 +45,12 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ReviewEntity addReview(@Valid RequestReviewDto reviewDto) {
         ReviewEntity review = new ReviewEntity();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         review.setExperienceId(reviewDto.getExperienceId());
-        review.setUserId(reviewDto.getUserId());
         review.setRating(reviewDto.getRating());
         review.setComment(reviewDto.getComment());
-        review.setCreatedAt(reviewDto.getCreatedAt());
+        review.setCreatedAt(new Date());
+        review.setUserId(user.getId());
 
         ReviewEntity savedReview = reviewRepository.save(review);
 
