@@ -27,8 +27,8 @@ public class ExperienceTest {
         assertNull(experience.getTags());
         assertNull(experience.getRating());
         assertEquals(0, experience.getCapacity());
-        assertNotNull(experience.getCreatedAt()); // Default value is the current date
-        assertTrue(experience.isStatus());       // Default value is true
+        assertNotNull(experience.getCreatedAt());
+        assertTrue(experience.isStatus());
     }
 
     @Test

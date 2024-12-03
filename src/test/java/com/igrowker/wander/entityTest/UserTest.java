@@ -78,8 +78,13 @@ public class UserTest {
 
     @Test
     void testNullEmail() {
+        // Arrange
         user.setEmail(null);
+
+        // Act
         Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        // Assert
         assertFalse(violations.isEmpty(), "Expected validation errors for null email");
         assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("The email is required")));
     }
