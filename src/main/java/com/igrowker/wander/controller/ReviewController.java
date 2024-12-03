@@ -50,4 +50,15 @@ public class ReviewController {
                     .body("Error adding the review: " + e.getMessage());
         }
     }
+
+    /**
+     * Endpoint to delete a review by id
+     * @param id id of the review to be deleted
+     * @return Response indicating if the review was deleted successfully
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseReviewDto> deleteReview(@PathVariable String id) {
+        ResponseReviewDto deletedReview = reviewService.deleteReview(id);
+        return ResponseEntity.ok(deletedReview);
+    }
 }	
