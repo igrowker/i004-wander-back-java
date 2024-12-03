@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class RegisterUserDto {
     @NotBlank(message = "El nombre es obligatorio y no puede estar vacío.")
+    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres.")
     @Pattern(regexp = "^[a-zA-ZÀ-ÿ\\s]+$", message = "El nombre solo debe contener letras.")
     private String name;
 
