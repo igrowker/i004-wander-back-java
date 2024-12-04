@@ -2,37 +2,35 @@ package com.igrowker.wander.entity;
 
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "bookings")
 public class BookingEntity {
-
     @Id
     private String id;
 
-    @NotNull(message = "Experience is required")
+    @NotNull(message = "Experience ID is required")
     private String experienceId;
 
-    @NotNull(message = "User is required")
+    @NotNull(message = "User ID is required")
     private String userId;
 
     @NotNull(message = "Status is required")
     private BookingStatus status;
 
     @NotNull(message = "Booking date is required")
-    private Date bookingDate;
+    private LocalDateTime bookingDate;
 
     @NotNull(message = "Total price is required")
     @Min(value = 0, message = "Total price must be non-negative")
@@ -45,6 +43,21 @@ public class BookingEntity {
     @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
 
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt;
 
+    public void setBookingDate(LocalDateTime bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public BookingEntity(String experienceId, String userId, BookingStatus status, LocalDateTime bookingDate,
+                         double totalPrice, Integer participants, PaymentStatus paymentStatus) {
+        this.experienceId = experienceId;
+        this.userId = userId;
+        this.status = status;
+        this.bookingDate = bookingDate;
+        this.totalPrice = totalPrice;
+        this.participants = participants;
+        this.paymentStatus = paymentStatus;
+        this.createdAt = LocalDateTime.now();
+    }
 }

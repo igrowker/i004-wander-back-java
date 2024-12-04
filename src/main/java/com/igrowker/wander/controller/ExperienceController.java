@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -39,21 +40,20 @@ public class ExperienceController {
 
 	}
 
-	@GetMapping
-	public ResponseEntity<List<ExperienceEntity>> getExperiences(
-	        @RequestParam(required = false) List<String> location,
-	        @RequestParam(required = false) Double maxPrice,
-	        @RequestParam(required = false) String title,
-	        @RequestParam(required = false) List<String> tags) {
+    @GetMapping
+    public ResponseEntity<List<ExperienceEntity>> getExperiences(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> tags) {
 	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title, tags);
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(Collections.singletonList(location), maxPrice, title, tags);
 	        return ResponseEntity.ok(experiences);
-	    } catch (IllegalArgumentException e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
+
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
@@ -116,25 +116,6 @@ public class ExperienceController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-	
-	@GetMapping("/tags/{tag}")
-	public ResponseEntity<List<ExperienceEntity>> getExperiencesByTag(@PathVariable String tag) {
-	    List<ExperienceEntity> experiences = experienceService.getExperiencesByTag(tag);
-	    return ResponseEntity.ok(experiences);
-	}
-	
-	@GetMapping("/tags")
-	public ResponseEntity<List<ExperienceEntity>> getExperiencesByMultipleTags(
-	        @RequestParam List<String> tags) {
-	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiencesByMultipleTags(tags);
-	        return ResponseEntity.ok(experiences);
-	    } catch (IllegalArgumentException e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
-	}
 
 	/**
 	 * Retrieves all experiences for a specific host
@@ -148,4 +129,3 @@ public class ExperienceController {
 		return ResponseEntity.ok(responseDtos);
 	}
 }
-

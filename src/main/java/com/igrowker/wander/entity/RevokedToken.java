@@ -1,4 +1,3 @@
-
 package com.igrowker.wander.entity;
 
 import org.springframework.data.annotation.Id;

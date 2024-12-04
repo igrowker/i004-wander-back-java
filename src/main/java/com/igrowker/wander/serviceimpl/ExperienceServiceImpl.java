@@ -1,6 +1,5 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,11 +69,11 @@ public class ExperienceServiceImpl implements ExperienceService {
             }
             return experienceRepository.findByTagsIn(tags);
         }
-        
+
         if (country != null && !country.isEmpty() && city != null) {
             return experienceRepository.findByCountryAndCity(country, city);
         }
-        
+
         if (city != null) {
             if (maxPrice != null && title != null) {
                 return experienceRepository.findByCityAndPriceLessThanEqualAndTitleContaining(city, maxPrice, title);

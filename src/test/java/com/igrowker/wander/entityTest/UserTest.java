@@ -1,4 +1,4 @@
-/*package com.igrowker.wander.entityTest;
+package com.igrowker.wander.entityTest;
 
 import com.igrowker.wander.entity.User;
 import jakarta.validation.ConstraintViolation;
@@ -78,8 +78,13 @@ public class UserTest {
 
     @Test
     void testNullEmail() {
+        // Arrange
         user.setEmail(null);
+
+        // Act
         Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        // Assert
         assertFalse(violations.isEmpty(), "Expected validation errors for null email");
         assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("The email is required")));
     }
@@ -108,4 +113,4 @@ public class UserTest {
         assertEquals("https://medvirturials.com/img/default-image.png", newUser.getAvatar(), "Expected default avatar URL");
         assertNotNull(newUser.getCreatedAt(), "Expected default creation date to be set");
     }
-}*/
+}
