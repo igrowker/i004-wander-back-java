@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -67,5 +68,11 @@ public class BookingEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setBookingDate(@jakarta.validation.constraints.NotNull(message = "Booking date is required") Date bookingDate) {
+    }
+
+    public void setCreatedAt(Date date) {
     }
 }

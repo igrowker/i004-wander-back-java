@@ -54,11 +54,13 @@ public class BookingTest {
         BookingEntity newBooking = new BookingEntity();
         assertNotNull(newBooking.getCreatedAt(), "Expected default 'createdAt' to be set");
     }
+
     @Test
     void testSetters() {
         booking.setExperienceId(null);
         assertNull(booking.getExperienceId(), "ExperienceId should be null after setting it");
     }
+}
 
 /*    @Test
     void testInvalidExperienceId() {
