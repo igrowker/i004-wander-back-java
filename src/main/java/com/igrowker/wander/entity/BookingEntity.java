@@ -2,15 +2,15 @@ package com.igrowker.wander.entity;
 
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -45,6 +45,8 @@ public class BookingEntity {
     @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
 
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    public void setBookingDate(LocalDateTime localDateTime) {
+    }
 }

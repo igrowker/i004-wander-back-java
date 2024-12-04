@@ -26,9 +26,8 @@ public class User implements UserDetails {
     @Id
     private String id;
 
-    @Email
     @NotNull(message = "The email is required")
-    @Indexed(unique = true)
+    @Email(message = "must be a well-formed email address")
     private String email;
 
     @Indexed(unique = true)
