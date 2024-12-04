@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +28,11 @@ import com.igrowker.wander.service.BookingService;
 @Service
 @Transactional
 public class BookingServiceImpl implements BookingService {
-
     private final BookingRepository bookingRepository;
     private final ExperienceRepository experienceRepository;
     private final UserRepository userRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository,
-                              ExperienceRepository experienceRepository,
-                              UserRepository userRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, ExperienceRepository experienceRepository, UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.experienceRepository = experienceRepository;
         this.userRepository = userRepository;
@@ -67,12 +65,9 @@ public class BookingServiceImpl implements BookingService {
     public ResponseBookingDto updateBooking(String id, RequestUpdateBookingDto requestDto) {
         BookingEntity booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
-
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         validateUserRoleAndUpdateBooking(user, requestDto, booking);
-
         BookingEntity updatedBooking = bookingRepository.save(booking);
         return convertToResponseDto(updatedBooking);
     }
@@ -81,7 +76,6 @@ public class BookingServiceImpl implements BookingService {
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Experience not found"));
-
         User user = userRepository.findById(requestBookingDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -92,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
         BookingEntity booking = new BookingEntity();
         booking.setExperienceId(experience.getId());
         booking.setUserId(user.getId());
-        booking.setBookingDate(convertToLocalDateTime(requestBookingDto.getBookingDate()));
+        booking.setBookingDate(requestBookingDto.getBookingDate());
         booking.setParticipants(requestBookingDto.getParticipants());
         booking.setTotalPrice(calculateTotalPrice(experience, requestBookingDto.getParticipants()));
         booking.setStatus(BookingStatus.PENDING);
@@ -118,10 +112,9 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private boolean isExperienceAvailable(ExperienceEntity experience, Date bookingDate, int participants) {
-        LocalDateTime bookingDateTime = convertToLocalDateTime(bookingDate);
+    private boolean isExperienceAvailable(ExperienceEntity experience, LocalDateTime bookingDate, int participants) {
         boolean isDateAvailable = experience.getAvailabilityDates().stream()
-                .anyMatch(date -> date.equals(bookingDateTime));
+                .anyMatch(date -> date.equals(bookingDate));
         return isDateAvailable && experience.getCapacity() >= participants;
     }
 
@@ -134,23 +127,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private ResponseBookingDto convertToResponseDto(BookingEntity booking) {
-        ResponseBookingDto responseDto = new ResponseBookingDto();
-        responseDto.setId(booking.getId());
-        responseDto.setExperienceId(booking.getExperienceId().getId());
-        responseDto.setUserId(booking.getUserId().getId());
-        responseDto.setStatus(booking.getStatus());
-        responseDto.setBookingDate(booking.getBookingDate());
-        responseDto.setTotalPrice(booking.getTotalPrice());
-        responseDto.setParticipants(booking.getParticipants());
-        responseDto.setPaymentStatus(booking.getPaymentStatus());
-        responseDto.setCreatedAt(booking.getCreatedAt());
-        return responseDto;
-    }
-
-    private LocalDateTime convertToLocalDateTime(Date date) {
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return ResponseBookingDto.builder()
+                .id(booking.getId())
+                .experienceId(booking.getExperienceId())
+                .userId(booking.getUserId())
+                .status(booking.getStatus())
+                .bookingDate(booking.getBookingDate())
+                .totalPrice(booking.getTotalPrice())
+                .participants(booking.getParticipants())
+                .paymentStatus(booking.getPaymentStatus())
+                .createdAt(booking.getCreatedAt())
+                .build();
     }
 }

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +31,7 @@ public class BookingTest {
                 "exp123",
                 "user123",
                 BookingStatus.PENDING,
-                new Date(),
+                LocalDateTime.now(), // Usando LocalDateTime en lugar de Date
                 100.0,
                 2,
                 PaymentStatus.PAID,
@@ -54,7 +53,7 @@ public class BookingTest {
                 -50.0, // Invalid: totalPrice is negative
                 0, // Invalid: participants less than 1
                 null, // Invalid: paymentStatus is null
-                LocalDateTime.now()
+                LocalDateTime.now() // Añadiendo LocalDateTime como createdAt
         );
 
         Set<ConstraintViolation<BookingEntity>> violations = validator.validate(booking);
@@ -65,12 +64,12 @@ public class BookingTest {
 
     @Test
     void shouldFailWhenTotalPriceIsNegative() {
-        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, new Date(), 100.0, 2, PaymentStatus.PENDING, new Date());
+        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, LocalDateTime.now(), 100.0, 2, PaymentStatus.PENDING, LocalDateTime.now());
         booking.setExperienceId("exp123");
         booking.setUserId("user123");
         booking.setStatus(BookingStatus.PENDING);
-        booking.setBookingDate(new Date());
-        booking.setTotalPrice(-10.0);
+        booking.setBookingDate(LocalDateTime.now()); // Usando LocalDateTime
+        booking.setTotalPrice(-10.0); // Invalid: negative price
         booking.setParticipants(2);
         booking.setPaymentStatus(PaymentStatus.PAID);
 
@@ -83,13 +82,13 @@ public class BookingTest {
 
     @Test
     void shouldFailWhenParticipantsAreLessThanOne() {
-        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, new Date(), 100.0, 2, PaymentStatus.PENDING, new Date());
+        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, LocalDateTime.now(), 100.0, 2, PaymentStatus.PENDING, LocalDateTime.now());
         booking.setExperienceId("exp123");
         booking.setUserId("user123");
         booking.setStatus(BookingStatus.PENDING);
-        booking.setBookingDate(new Date());
+        booking.setBookingDate(LocalDateTime.now()); // Usando LocalDateTime
         booking.setTotalPrice(50.0);
-        booking.setParticipants(0); // Invalid
+        booking.setParticipants(0); // Invalid: participants less than 1
         booking.setPaymentStatus(PaymentStatus.PAID);
 
         Set<ConstraintViolation<BookingEntity>> violations = validator.validate(booking);
