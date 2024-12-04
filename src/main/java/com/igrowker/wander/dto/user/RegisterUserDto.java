@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class RegisterUserDto {
     @NotBlank(message = "El nombre es obligatorio y no puede estar vacío.")
+    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres.")
     @Pattern(regexp = "^[a-zA-ZÀ-ÿ\\s]+$", message = "El nombre solo debe contener letras.")
     private String name;
 
@@ -34,4 +35,20 @@ public class RegisterUserDto {
     private List<String> preferences;
 
     private String location;
+
+    public void setName(String name) {
+        if (name != null) {
+            this.name = name.trim();
+        } else {
+            this.name = null;
+        }
+    }
+
+    public void setRole(String role) {
+        if (role != null) {
+            this.role = role.toUpperCase();
+        } else {
+            this.role = null;
+        }
+    }
 }

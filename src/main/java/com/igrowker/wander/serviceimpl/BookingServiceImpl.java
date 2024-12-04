@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,8 +94,7 @@ public class BookingServiceImpl implements BookingService {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
                 .orElseThrow(() -> new RuntimeException("Experience not found"));
 
-        User user = userRepository.findById(requestBookingDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!isExperienceAvailable(experience, requestBookingDto.getBookingDate(), requestBookingDto.getParticipants())) {
             throw new RuntimeException("Experience is not available for the selected date or number of participants");
@@ -126,15 +126,6 @@ public class BookingServiceImpl implements BookingService {
 
     private double calculateTotalPrice(ExperienceEntity experience, int participants) {
         return experience.getPrice() * participants;
-    }
-
-    private BookingEntity convertToEntity(RequestBookingDto dto) {
-        BookingEntity booking = new BookingEntity();
-        booking.setExperienceId(dto.getExperienceId());
-        booking.setUserId(dto.getUserId());
-        booking.setBookingDate(dto.getBookingDate());
-        booking.setParticipants(dto.getParticipants());
-        return booking;
     }
 
     private ResponseBookingDto convertToResponseDto(BookingEntity booking) {

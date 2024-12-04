@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -17,10 +18,8 @@ public class RequestBookingDto {
     @NotNull(message = "Experience ID is required")
     private String experienceId;
 
-    @NotNull(message = "User ID is required")
-    private String userId;
-
     @NotNull(message = "Booking date is required")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date bookingDate;
 
     @NotNull(message = "Number of participants is required")
