@@ -65,7 +65,7 @@ public class BookingTest {
 
     @Test
     void shouldFailWhenTotalPriceIsNegative() {
-        BookingEntity booking = new BookingEntity();
+        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, new Date(), 100.0, 2, PaymentStatus.PENDING, new Date());
         booking.setExperienceId("exp123");
         booking.setUserId("user123");
         booking.setStatus(BookingStatus.PENDING);
@@ -83,7 +83,7 @@ public class BookingTest {
 
     @Test
     void shouldFailWhenParticipantsAreLessThanOne() {
-        BookingEntity booking = new BookingEntity();
+        BookingEntity booking = new BookingEntity("1", "exp123", "user123", BookingStatus.PENDING, new Date(), 100.0, 2, PaymentStatus.PENDING, new Date());
         booking.setExperienceId("exp123");
         booking.setUserId("user123");
         booking.setStatus(BookingStatus.PENDING);

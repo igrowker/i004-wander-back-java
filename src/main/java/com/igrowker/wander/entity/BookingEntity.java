@@ -46,4 +46,7 @@ public class BookingEntity {
     private PaymentStatus paymentStatus;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public void setBookingDate(LocalDateTime localDateTime) {
+    }
 }
