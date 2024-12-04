@@ -31,6 +31,9 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
 
     @Query("{ 'location.0': ?0, 'title': { $regex: ?1, $options: 'i' } }")
     List<ExperienceEntity> findByCountryAndTitleContaining(String country, String title);
+    
+    @Query("{ 'location.0': ?0, 'location.1': ?1 }")
+    List<ExperienceEntity> findByCountryAndCity(String country, String city);
 
     @Query("{ 'location.0': ?0 }")
     List<ExperienceEntity> findByCountry(String country);

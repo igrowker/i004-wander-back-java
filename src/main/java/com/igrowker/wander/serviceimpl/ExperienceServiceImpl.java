@@ -71,6 +71,10 @@ public class ExperienceServiceImpl implements ExperienceService {
             return experienceRepository.findByTagsIn(tags);
         }
 
+        if (country != null && !country.isEmpty() && city != null) {
+            return experienceRepository.findByCountryAndCity(country, city);
+        }
+
         if (city != null) {
             if (maxPrice != null && title != null) {
                 return experienceRepository.findByCityAndPriceLessThanEqualAndTitleContaining(city, maxPrice, title);
@@ -118,8 +122,8 @@ public class ExperienceServiceImpl implements ExperienceService {
         }
         if (title != null) {
             return experienceRepository.findByTitleContaining(title);
-        }
-
+        }      
+        
         return experienceRepository.findAll();
     }
 
