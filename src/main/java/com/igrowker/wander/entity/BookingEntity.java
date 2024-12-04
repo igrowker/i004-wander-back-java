@@ -2,14 +2,14 @@ package com.igrowker.wander.entity;
 
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class BookingEntity {
     private BookingStatus status;
 
     @NotNull(message = "Booking date is required")
-    private LocalDateTime bookingDate;
+    private Date bookingDate;
 
     @NotNull(message = "Total price is required")
     @Min(value = 0, message = "Total price must be non-negative")
@@ -45,34 +45,5 @@ public class BookingEntity {
     @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
 
-    private LocalDateTime createdAt;
-
-    // Constructor to initialize createdAt
-    public BookingEntity(String id, String experienceId, String userId, BookingStatus status, LocalDateTime bookingDate,
-                         double totalPrice, Integer participants, PaymentStatus paymentStatus) {
-        this.id = id;
-        this.experienceId = experienceId;
-        this.userId = userId;
-        this.status = status;
-        this.bookingDate = bookingDate;
-        this.totalPrice = totalPrice;
-        this.participants = participants;
-        this.paymentStatus = paymentStatus;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    // Setters for specific fields
-    public void setExperienceId(String experienceId) {
-        this.experienceId = experienceId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setBookingDate(@jakarta.validation.constraints.NotNull(message = "Booking date is required") Date bookingDate) {
-    }
-
-    public void setCreatedAt(Date date) {
-    }
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

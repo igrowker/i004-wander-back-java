@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -46,7 +47,7 @@ public class ExperienceController {
 	        @RequestParam(required = false) String title,
 	        @RequestParam(required = false) List<String> tags) {
 	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiences(location, maxPrice, title, tags);
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(Collections.singletonList(location), maxPrice, title, tags);
 	        return ResponseEntity.ok(experiences);
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

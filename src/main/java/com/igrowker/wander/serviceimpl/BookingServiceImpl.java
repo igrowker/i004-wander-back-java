@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +150,10 @@ public class BookingServiceImpl implements BookingService {
                 .createdAt(convertToResponseDto(booking.getCreatedAt())) // Conversión añadida
                 .build();
     }
-
+    private Date convertToResponseDto(@NotNull Date bookingDate) {
+        // Ejemplo: Retornar el mismo objeto para propósitos de demostración
+        return bookingDate;
+    }
     private Date convertToResponseDto(LocalDateTime createdAt) {
         LocalDateTime localDateTime = null;
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
