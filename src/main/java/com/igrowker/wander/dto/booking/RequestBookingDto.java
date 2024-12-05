@@ -15,7 +15,7 @@ import java.util.Date;
 @Builder
 public class RequestBookingDto {
 
-    @NotNull(message = "Experience ID is required")
+    @NotBlank(message = "Experience ID is required")
     private String experienceId;
 
     @NotNull(message = "Booking date is required")
@@ -25,7 +25,7 @@ public class RequestBookingDto {
     @Min(value = 1, message = "At least one participant is required")
     private Integer participants;
 
-    @NotNull(message = "User ID is required")
+    @NotBlank(message = "User ID is required")
     private String userId;
 }
 
