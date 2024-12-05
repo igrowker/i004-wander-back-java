@@ -144,7 +144,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Override
     public ExperienceEntity getExperienceById(String id) {
         return experienceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Experience with ID: " + id + " was not found."));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró la experiencia con el ID: " + id));
     }
 
     @Override
@@ -198,7 +198,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Override
     public List<ResponseExperienceDto> getExperiencesByHost(String hostId) {
         userRepository.findById(hostId)
-                .orElseThrow(() -> new ResourceNotFoundException("Host with id: " + hostId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el anfitrión con ID: " + hostId));
 
         List<ExperienceEntity> experiences = experienceRepository.findByHostId(hostId);
 

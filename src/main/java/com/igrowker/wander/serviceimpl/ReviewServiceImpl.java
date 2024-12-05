@@ -33,7 +33,7 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public List<ResponseReviewDto> getReviewsByExperience(String experienceId) {
         if (experienceId == null || experienceId.isEmpty()) {
-            throw new IllegalArgumentException("Experience id can't be null or empty.");
+            throw new IllegalArgumentException("El ID de la experiencia no puede ser nulo o vacío.");
         }
         List<ReviewEntity> reviews = reviewRepository.findByExperienceIdOrderByCreatedAtDesc(experienceId);
 
@@ -62,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService{
         double averageRating = sumRatings / allReviews.size();
 
         ExperienceEntity experience = experienceRepository.findById(review.getExperienceId())
-                .orElseThrow(() -> new IllegalArgumentException("Experience not found with ID: " + review.getExperienceId()));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró la experiencia con ID: " + review.getExperienceId()));
         experience.setRating(averageRating);
         experienceRepository.save(experience);
 
@@ -72,7 +72,7 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ResponseReviewDto deleteReview(String id) {
         ReviewEntity review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró reseña con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró reseña con ID: " + id));
 
         User authenticatedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

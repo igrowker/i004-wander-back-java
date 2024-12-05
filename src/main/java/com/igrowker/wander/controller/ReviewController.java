@@ -42,12 +42,12 @@ public class ReviewController {
     public ResponseEntity<String> addReview(@Valid @RequestBody RequestReviewDto reviewDto) {
         try {
             reviewService.addReview(reviewDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Review added successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Reseña agregada exitosamente");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error in the review data: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en los datos de la reseña: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error adding the review: " + e.getMessage());
+                    .body("Error al agregar la reseña: " + e.getMessage());
         }
     }
 
