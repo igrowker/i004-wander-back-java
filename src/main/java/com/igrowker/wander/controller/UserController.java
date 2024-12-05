@@ -16,13 +16,24 @@ public class UserController {
     private UserService userService;
 
     /**
-     * get user profile
+     * get authenticated user profile
      *
      * @return UserDto with user profile data
      */
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getUserProfile() {
-        UserDto userDto = userService.getUserProfile();
+        UserDto userDto = userService.getUserProfile(null);
+        return ResponseEntity.ok(userDto);
+    }
+
+    /**
+     * get user profile by ID
+     *
+     * @return UserDto with user profile data
+     */
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<UserDto> getUserProfileById(@PathVariable String id) {
+        UserDto userDto = userService.getUserProfile(id);
         return ResponseEntity.ok(userDto);
     }
 
