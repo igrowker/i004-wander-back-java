@@ -1,5 +1,6 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,77 +55,59 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title, List<String> tags) {
-        String country = (location != null && location.size() > 0) ? location.get(0).trim() : null;
-        String city = (location != null && location.size() > 1) ? location.get(1).trim() : null;
+        // Control: Si no hay filtros, devolver todo
+        if ((location == null || location.isEmpty()) 
+                && maxPrice == null 
+                && (title == null || title.trim().isEmpty()) 
+                && (tags == null || tags.isEmpty())) {
+            return experienceRepository.findAll();
+        }
 
+        // Extraer país y ciudad
+        String country = (location != null && location.size() > 0 && !location.get(0).trim().isEmpty()) ? location.get(0).trim() : null;
+        String city = (location != null && location.size() > 1 && !location.get(1).trim().isEmpty()) ? location.get(1).trim() : null;
+
+        // Lista de resultados para ir acumulando las experiencias
+        List<ExperienceEntity> results = new ArrayList<>();
+
+        // Filtro: País y ciudad
+        if (country != null && city != null) {
+            results = experienceRepository.findByCountryAndCity(country, city);
+        } else if (city != null) {
+            // Filtro: Solo ciudad
+            results = experienceRepository.findByCity(city);
+        } else if (country != null) {
+            // Filtro: Solo país
+            results = experienceRepository.findByCountry(country);
+        } else {
+            // Filtro: Si solo queda `location` genérico
+            results = experienceRepository.findByLocationContains(location);
+        }
+
+        // Filtro adicional: Tags
         if (tags != null && !tags.isEmpty()) {
-            if (city != null) {
-                return experienceRepository.findByCityAndTagsIn(city, tags);
-            }
-            if (country != null) {
-                return experienceRepository.findByCountryAndTagsIn(country, tags);
-            }
-            if (location != null) {
-                return experienceRepository.findByLocationContainsAndTagsIn(location, tags);
-            }
-            return experienceRepository.findByTagsIn(tags);
+            results = results.stream()
+                    .filter(exp -> exp.getTags() != null && !exp.getTags().isEmpty() && exp.getTags().stream().anyMatch(tags::contains))
+                    .collect(Collectors.toList());
         }
 
-        if (country != null && !country.isEmpty() && city != null) {
-            return experienceRepository.findByCountryAndCity(country, city);
-        }
-
-        if (city != null) {
-            if (maxPrice != null && title != null) {
-                return experienceRepository.findByCityAndPriceLessThanEqualAndTitleContaining(city, maxPrice, title);
-            }
-            if (title != null) {
-                return experienceRepository.findByCityAndTitleContaining(city, title);
-            }
-            if (maxPrice != null) {
-                return experienceRepository.findByCityAndPriceLessThanEqual(city, maxPrice);
-            }
-            return experienceRepository.findByCity(city);
-        }
-
-        if (country != null) {
-            if (maxPrice != null && title != null) {
-                return experienceRepository.findByCountryAndPriceLessThanEqualAndTitleContaining(country, maxPrice, title);
-            }
-            if (title != null) {
-                return experienceRepository.findByCountryAndTitleContaining(country, title);
-            }
-            if (maxPrice != null) {
-                return experienceRepository.findByCountryAndPriceLessThanEqual(country, maxPrice);
-            }
-            return experienceRepository.findByCountry(country);
-        }
-
-        if (location != null) {
-            if (maxPrice != null && title != null) {
-                return experienceRepository.findByLocationContainsAndPriceLessThanEqualAndTitleContaining(location, maxPrice, title);
-            }
-            if (title != null) {
-                return experienceRepository.findByLocationContainsAndTitleContaining(location, title);
-            }
-            if (maxPrice != null) {
-                return experienceRepository.findByLocationContainsAndPriceLessThanEqual(location, maxPrice);
-            }
-            return experienceRepository.findByLocationContains(location);
-        }
-
-        if (maxPrice != null && title != null) {
-            return experienceRepository.findByPriceLessThanEqualAndTitleContaining(maxPrice, title);
-        }
+        // Filtro adicional: Precio máximo
         if (maxPrice != null) {
-            return experienceRepository.findByPriceLessThanEqual(maxPrice);
+            results = results.stream()
+                    .filter(exp -> exp.getPrice() != null && exp.getPrice() <= maxPrice)
+                    .collect(Collectors.toList());
         }
-        if (title != null) {
-            return experienceRepository.findByTitleContaining(title);
-        }      
-        
-        return experienceRepository.findAll();
+
+        // Filtro adicional: Título
+        if (title != null && !title.trim().isEmpty()) {
+            results = results.stream()
+                    .filter(exp -> exp.getTitle() != null && exp.getTitle().toLowerCase().contains(title.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return results;
     }
+
 
     @Override
     public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice) {

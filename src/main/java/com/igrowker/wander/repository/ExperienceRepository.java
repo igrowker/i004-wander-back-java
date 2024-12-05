@@ -11,7 +11,9 @@ import com.igrowker.wander.entity.ExperienceEntity;
 
 @EnableMongoRepositories(basePackages = "com.igrowker.wander.repository")
 public interface ExperienceRepository extends MongoRepository<ExperienceEntity, String> {
-    @Query("{ 'location.1': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
+	List<ExperienceEntity> findAll();
+	
+	@Query("{ 'location.1': ?0, 'price': { $lte: ?1 }, 'title': { $regex: ?2, $options: 'i' } }")
     List<ExperienceEntity> findByCityAndPriceLessThanEqualAndTitleContaining(String city, Double maxPrice, String title);
 
     @Query("{ 'location.1': ?0, 'price': { $lte: ?1 } }")
@@ -70,6 +72,4 @@ public interface ExperienceRepository extends MongoRepository<ExperienceEntity, 
     List<ExperienceEntity> findByLocationContainsAndTagsIn(List<String> location, List<String> tags);
 
     List<ExperienceEntity> findByTagsIn(List<String> tags);
-    
-    List<ExperienceEntity> findAll();
 }
