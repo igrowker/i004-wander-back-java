@@ -40,19 +40,24 @@ public class ExperienceController {
 
 	}
 
-    @GetMapping
-    public ResponseEntity<List<ExperienceEntity>> getExperiences(
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) List<String> tags) {
+	@GetMapping
+	public ResponseEntity<List<ExperienceEntity>> getExperiences(
+	        @RequestParam(required = false) String location,
+	        @RequestParam(required = false) Double maxPrice,
+	        @RequestParam(required = false) String title,
+	        @RequestParam(required = false) List<String> tags) {
 	    try {
-	        List<ExperienceEntity> experiences = experienceService.getExperiences(Collections.singletonList(location), maxPrice, title, tags);
+	        List<String> locationParts = (location != null && !location.trim().isEmpty())
+	                ? List.of(location.split(","))
+	                : null;
+	        List<ExperienceEntity> experiences = experienceService.getExperiences(locationParts, maxPrice, title, tags);
 	        return ResponseEntity.ok(experiences);
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
+
 
 
 	@GetMapping("/{id}")
