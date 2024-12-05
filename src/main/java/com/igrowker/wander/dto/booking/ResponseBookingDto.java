@@ -31,7 +31,6 @@ public class ResponseBookingDto {
     private BookingStatus status;
 
     @NotNull(message = "Booking date is required")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "UTC")
     private Date bookingDate;
 
     @NotNull(message = "Total price is required")
