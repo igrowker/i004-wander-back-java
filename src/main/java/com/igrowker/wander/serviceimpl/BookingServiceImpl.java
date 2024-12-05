@@ -1,9 +1,10 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,7 +110,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private boolean isExperienceAvailable(ExperienceEntity experience, LocalDateTime bookingDate, int participants) {
+    private boolean isExperienceAvailable(ExperienceEntity experience, @NotNull(message = "Booking date is required") Date bookingDate, int participants) {
         boolean isDateAvailable = experience.getAvailabilityDates().stream()
                 .anyMatch(date -> date.equals(bookingDate));
         return isDateAvailable && experience.getCapacity() >= participants;
