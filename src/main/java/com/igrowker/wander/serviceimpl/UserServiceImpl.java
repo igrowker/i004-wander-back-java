@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
      *
      * @param userUpdates a RequestUpdateUserDto object containing the new data to update
      * @return a dto object with the user new data
-     * @throws RuntimeException if no user is found with the provided email
      */
     @Override
     public UserDto updateUserProfile(RequestUpdateUserDto userUpdates) {
