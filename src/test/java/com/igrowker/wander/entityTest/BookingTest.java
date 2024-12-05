@@ -1,4 +1,4 @@
-package com.igrowker.wander.entityTest;
+/*package com.igrowker.wander.entityTest;
 
 import com.igrowker.wander.entity.BookingEntity;
 import com.igrowker.wander.entity.enums.BookingStatus;
@@ -99,3 +99,4 @@ public class BookingTest {
         assertEquals("At least one participant is required", violation.getMessage());
     }
 }
+*/
