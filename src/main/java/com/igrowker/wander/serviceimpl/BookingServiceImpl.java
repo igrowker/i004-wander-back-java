@@ -1,7 +1,6 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,9 +111,12 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private boolean isExperienceAvailable(ExperienceEntity experience, LocalDateTime bookingDate, int participants) {
+    private boolean isExperienceAvailable(ExperienceEntity experience, @NotNull(message = "Booking date is required") Date bookingDate, int participants) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String formattedBookinDate = formatter.format(bookingDate);
+
         boolean isDateAvailable = experience.getAvailabilityDates().stream()
-                .anyMatch(date -> date.equals(bookingDate));
+                .anyMatch(date -> date.equals(formattedBookinDate));
         return isDateAvailable && experience.getCapacity() >= participants;
     }
 
