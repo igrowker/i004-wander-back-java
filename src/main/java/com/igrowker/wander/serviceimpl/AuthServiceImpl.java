@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new ResourceAlreadyExistsException("Email " + userDto.getEmail() + " already exists");
+            throw new ResourceAlreadyExistsException("El correo " + userDto.getEmail() + " ya está registrado.");
         }
 
         User user = new User();
