@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import java.util.Random;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+
 
     @Autowired
     private UserRepository userRepository;
@@ -59,11 +59,11 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(userDto.getRole());
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
-        user.setCreatedAt(LocalDateTime.now());
-        
+        user.setCreatedAt(new Date());  // Cambio aquí: LocalDateTime.now() -> new Date()
+
         user.setEnabled(false);
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
 
         emailService.sendVerificationEmail(user);
 
@@ -94,7 +94,8 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidDataException("Cuenta ya se encuentra verificada.");
         }
 
-        if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+        // Cambio aquí: LocalDateTime.now() -> new Date()
+        if (user.getVerificationCodeExpiresAt().before(new Date())) {
             throw new InvalidDataException("Código de verificación vencido.");
         }
 
@@ -119,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
 
         return responseUserDto;
     }
-    
+
     @Transactional
     @Override
     public void resendVerificationCode(String email) {
@@ -131,7 +132,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
 
         userRepository.save(user);
         emailService.sendVerificationEmail(user);
@@ -186,7 +187,7 @@ public class AuthServiceImpl implements AuthService {
 
             String token = authorizationHeader.substring(7);
 
-            jwtService.extractAllClaims(token); 
+            jwtService.extractAllClaims(token);
 
             invalidateToken(token, jwtService.extractExpiration(token));
 
@@ -206,7 +207,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         user.setPasswordResetCode(generateVerificationCode());
-        user.setPasswordResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setPasswordResetCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
         userRepository.save(user);
 
         emailService.sendPasswordResetEmail(user);
@@ -215,7 +216,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void resetPassword(String mail, String code, String newPassword) {
- 
+
         User user = userRepository.findByEmail(mail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -223,7 +224,8 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidDataException("Cuenta ya se encuentra verificada.");
         }
 
-        if (user.getPasswordResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+        // Cambio aquí: LocalDateTime.now() -> new Date()
+        if (user.getPasswordResetCodeExpiresAt().before(new Date())) {
             throw new InvalidDataException("Código de verificación vencido.");
         }
 
@@ -250,5 +252,4 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
-
 }

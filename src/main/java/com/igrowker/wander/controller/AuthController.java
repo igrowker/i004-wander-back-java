@@ -4,7 +4,7 @@ import com.igrowker.wander.dto.user.*;
 import com.igrowker.wander.security.JwtService;
 import com.igrowker.wander.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class AuthController {
     private JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseUserDto> registerUser(@Valid @RequestBody RegisterUserDto userDto) {
+    public ResponseEntity<ResponseUserDto> registerUser(@com.igrowker.wander.controller.Valid @RequestBody RegisterUserDto userDto) {
         ResponseUserDto registeredUser = authService.registerUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }

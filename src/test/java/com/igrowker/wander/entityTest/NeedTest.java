@@ -34,31 +34,33 @@ public class NeedTest {
     @Test
     void testEqualsAndHashCode() {
         // Arrange
+        String experienceId = "exp-123";
         Need need1 = new Need();
         need1.setId("1");
-        need1.setExperienceId("exp-123");
+        need1.setExperienceId(experienceId);
         need1.setType("accommodation");
         need1.setQuantity(5);
         need1.setStatus("pending");
 
         Need need2 = new Need();
         need2.setId("1");
-        need2.setExperienceId("exp-123");
+        need2.setExperienceId(experienceId);
         need2.setType("accommodation");
         need2.setQuantity(5);
         need2.setStatus("pending");
 
         // Act & Assert
-        assertEquals(need1, need2); // Verifica que equals funciona
+        assertEquals(need1, need2); // Verifica que equals funciona correctamente
         assertEquals(need1.hashCode(), need2.hashCode()); // Verifica que hashCode coincide
     }
 
     @Test
     void testToString() {
         // Arrange
+        String experienceId = "exp-123";
         Need need = new Need();
         need.setId("1");
-        need.setExperienceId("exp-123");
+        need.setExperienceId(experienceId);
         need.setType("food");
         need.setQuantity(3);
         need.setStatus("completed");
