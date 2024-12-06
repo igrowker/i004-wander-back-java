@@ -97,8 +97,10 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private UserDto convertToUserDto(User user) {
+    @Override
+    public UserDto convertToUserDto(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())
