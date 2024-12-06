@@ -163,11 +163,13 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
 
         UserDto userDto = UserDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())
                 .preferences(user.getPreferences())
                 .location(user.getLocation())
+                .phone(user.getPhone())
                 .build();
 
         return LoginResponse.builder()
