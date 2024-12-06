@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Data
@@ -30,9 +31,8 @@ public class ResponseBookingDto {
     @NotNull(message = "Booking status is required")
     private BookingStatus status;
 
-    @NotNull(message = "Booking date is required")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "UTC")
-    private Date bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "UTC")
+    private Instant bookingDate;
 
     @NotNull(message = "Total price is required")
     private double totalPrice;

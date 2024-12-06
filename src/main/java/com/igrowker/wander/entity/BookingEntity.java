@@ -1,5 +1,6 @@
 package com.igrowker.wander.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import jakarta.validation.constraints.Min;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Data
@@ -29,8 +31,8 @@ public class BookingEntity {
     @NotNull(message = "Status is required")
     private BookingStatus status;
 
-    @NotNull(message = "Booking date is required")
-    private Date bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private Instant bookingDate;
 
     @NotNull(message = "Total price is required")
     @Min(value = 0, message = "Total price must be non-negative")
@@ -43,10 +45,10 @@ public class BookingEntity {
     @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
 
-    private Date createdAt;
+    private Date createdAt = new Date();
 
-    public BookingEntity(String experienceId, String userId, BookingStatus status, Date bookingDate,
-                         double totalPrice, Integer participants, PaymentStatus paymentStatus, Date date) {
+    public BookingEntity(String experienceId, String userId, BookingStatus status, Instant bookingDate,
+                         double totalPrice, Integer participants, PaymentStatus paymentStatus) {
         this.experienceId = experienceId;
         this.userId = userId;
         this.status = status;
@@ -54,6 +56,5 @@ public class BookingEntity {
         this.totalPrice = totalPrice;
         this.participants = participants;
         this.paymentStatus = paymentStatus;
-        this.createdAt = new Date();
     }
 }
