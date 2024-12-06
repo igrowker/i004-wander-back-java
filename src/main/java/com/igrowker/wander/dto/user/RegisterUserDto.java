@@ -32,6 +32,8 @@ public class RegisterUserDto {
     @NotBlank(message = "El rol es obligatorio.")
     private String role;
 
+    private String phone;
+
     private List<String> preferences;
 
     private String location;

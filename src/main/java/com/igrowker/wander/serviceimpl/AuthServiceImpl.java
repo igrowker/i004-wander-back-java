@@ -26,7 +26,6 @@ import java.util.Random;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-
     @Autowired
     private UserRepository userRepository;
 
@@ -54,16 +53,17 @@ public class AuthServiceImpl implements AuthService {
 
         User user = new User();
         user.setName(userDto.getName());
+        user.setPhone(userDto.getPhone());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(userDto.getRole());
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
-        user.setCreatedAt(new Date());  // Cambio aquí: LocalDateTime.now() -> new Date()
+        user.setCreatedAt(new Date());
 
         user.setEnabled(false);
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));
 
         emailService.sendVerificationEmail(user);
 
@@ -71,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseUserDto responseUserDto = new ResponseUserDto();
         responseUserDto.setId(savedUser.getId());
         responseUserDto.setName(savedUser.getName());
+        responseUserDto.setPhone(savedUser.getPhone());
         responseUserDto.setEmail(savedUser.getEmail());
         responseUserDto.setRole(savedUser.getRole());
         responseUserDto.setPreferences(savedUser.getPreferences());
@@ -162,11 +163,13 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
 
         UserDto userDto = UserDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())
                 .preferences(user.getPreferences())
                 .location(user.getLocation())
+                .phone(user.getPhone())
                 .build();
 
         return LoginResponse.builder()
