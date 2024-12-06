@@ -27,12 +27,14 @@ public class ReviewTest {
     void testAllArgsConstructor() {
         // Crear una instancia usando el constructor con todos los argumentos
         Date createdAt = new Date();
-        ReviewEntity review = new ReviewEntity("123", "exp-001", "user-001", 4.5, "Great experience!", createdAt);
+        ReviewEntity review = new ReviewEntity("123", "exp-001", "user-001", "imagen.png", "User Name", 4.5, "Great experience!", createdAt);
 
         // Verificar que los valores se han asignado correctamente
         assertEquals("123", review.getId());
         assertEquals("exp-001", review.getExperienceId());
         assertEquals("user-001", review.getUserId());
+        assertEquals("imagen.png", review.getUserAvatar());
+        assertEquals("User Name", review.getUserName());
         assertEquals(4.5, review.getRating());
         assertEquals("Great experience!", review.getComment());
         assertEquals(createdAt, review.getCreatedAt());

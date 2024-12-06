@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -12,15 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseUserDto {
+
     private String id;
     private String name;
+    private String phone;
     private String email;
     private String role;
     private List<String> preferences;
     private String location;
-    private LocalDateTime createdAt;
+    private Date createdAt;
     private String verificationCode;
 
-    public void setCreatedAt(Date createdAt) {
-    }
 }

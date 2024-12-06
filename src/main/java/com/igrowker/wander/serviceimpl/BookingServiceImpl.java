@@ -61,9 +61,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto updateBooking(String id, RequestUpdateBookingDto requestDto) {
         BookingEntity booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la reserva con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
         User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         validateUserRoleAndUpdateBooking(user, requestDto, booking);
         BookingEntity updatedBooking = bookingRepository.save(booking);
         return convertToResponseDto(updatedBooking);
@@ -75,10 +75,10 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la experiencia"));
 
         User user = userRepository.findById(requestBookingDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (!isExperienceAvailable(experience, requestBookingDto.getBookingDate(), requestBookingDto.getParticipants())) {
-            throw new IllegalArgumentException("La experiencia no está disponible para la fecha o el número de participantes seleccionados");
+            throw new IllegalArgumentException("Experience is not available for the selected date or number of participants");
         }
 
         BookingEntity booking = new BookingEntity();
