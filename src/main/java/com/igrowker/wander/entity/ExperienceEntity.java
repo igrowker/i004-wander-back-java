@@ -42,4 +42,6 @@ public class ExperienceEntity {
     private Date createdAt = new Date();
     
     private boolean status = true;
+
+    private List<String> experienceImages;
 }
