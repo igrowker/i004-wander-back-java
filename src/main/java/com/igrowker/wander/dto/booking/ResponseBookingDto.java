@@ -1,6 +1,7 @@
 package com.igrowker.wander.dto.booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.igrowker.wander.dto.user.UserDto;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 
@@ -25,8 +26,14 @@ public class ResponseBookingDto {
     @NotNull(message = "Experience ID is required")
     private String experienceId;
 
+    private String experienceTitle;
+
     @NotNull(message = "User ID is required")
     private String userId;
+
+    private UserDto tourist;
+
+    private UserDto provider;
 
     @NotNull(message = "Booking status is required")
     private BookingStatus status;

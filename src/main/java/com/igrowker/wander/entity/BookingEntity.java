@@ -1,6 +1,7 @@
 package com.igrowker.wander.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.igrowker.wander.dto.user.UserDto;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import jakarta.validation.constraints.Min;
@@ -28,6 +29,10 @@ public class BookingEntity {
     @NotNull(message = "User ID is required")
     private String userId;
 
+    private UserDto touristInfo;
+
+    private UserDto providerInfo;
+
     @NotNull(message = "Status is required")
     private BookingStatus status;
 
@@ -47,10 +52,12 @@ public class BookingEntity {
 
     private Date createdAt = new Date();
 
-    public BookingEntity(String experienceId, String userId, BookingStatus status, Instant bookingDate,
+    public BookingEntity(String experienceId, String userId, UserDto touristInfo, UserDto providerInfo, BookingStatus status, Instant bookingDate,
                          double totalPrice, Integer participants, PaymentStatus paymentStatus) {
         this.experienceId = experienceId;
         this.userId = userId;
+        this.touristInfo = touristInfo;
+        this.providerInfo = providerInfo;
         this.status = status;
         this.bookingDate = bookingDate;
         this.totalPrice = totalPrice;
