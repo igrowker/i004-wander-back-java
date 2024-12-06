@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
      *
      * @param userUpdates a RequestUpdateUserDto object containing the new data to update
      * @return a dto object with the user new data
-     * @throws RuntimeException if no user is found with the provided email
      */
     @Override
     public UserDto updateUserProfile(RequestUpdateUserDto userUpdates) {
@@ -98,8 +97,10 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private UserDto convertToUserDto(User user) {
+    @Override
+    public UserDto convertToUserDto(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())

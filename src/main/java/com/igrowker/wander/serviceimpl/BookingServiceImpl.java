@@ -1,11 +1,10 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.validation.constraints.NotNull;
+import com.igrowker.wander.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,11 +29,13 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ExperienceRepository experienceRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, ExperienceRepository experienceRepository, UserRepository userRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, ExperienceRepository experienceRepository, UserRepository userRepository, UserService userService) {
         this.bookingRepository = bookingRepository;
         this.experienceRepository = experienceRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto updateBooking(String id, RequestUpdateBookingDto requestDto) {
         BookingEntity booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la reserva con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario"));
         validateUserRoleAndUpdateBooking(user, requestDto, booking);
@@ -75,16 +76,22 @@ public class BookingServiceImpl implements BookingService {
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la experiencia"));
-        User user = userRepository.findById(requestBookingDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario"));
+
+        User tourist = userRepository.findById(requestBookingDto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el turista"));
+
+        User provider = userRepository.findById(experience.getHostId())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el proveedor"));
 
         if (!isExperienceAvailable(experience, requestBookingDto.getBookingDate(), requestBookingDto.getParticipants())) {
-            throw new IllegalArgumentException("La experiencia no está disponible para la fecha o el número de participantes seleccionados");
+            throw new IllegalArgumentException("La experiencia no está disponible para la fecha seleccionada o el número de participantes.");
         }
 
         BookingEntity booking = new BookingEntity();
         booking.setExperienceId(experience.getId());
-        booking.setUserId(user.getId());
+        booking.setUserId(tourist.getId());
+        booking.setTouristInfo(userService.convertToUserDto(tourist));
+        booking.setProviderInfo(userService.convertToUserDto(provider));
         booking.setBookingDate(requestBookingDto.getBookingDate());
         booking.setParticipants(requestBookingDto.getParticipants());
         booking.setTotalPrice(calculateTotalPrice(experience, requestBookingDto.getParticipants()));
@@ -92,8 +99,9 @@ public class BookingServiceImpl implements BookingService {
         booking.setPaymentStatus(PaymentStatus.PENDING);
 
         BookingEntity savedBooking = bookingRepository.save(booking);
-        return convertToResponseDto(savedBooking);
-    }
+
+            return convertToResponseDto(savedBooking);
+        }
 
     private void validateUserRoleAndUpdateBooking(User user, RequestUpdateBookingDto requestDto, BookingEntity booking) {
         if ("TOURIST".equalsIgnoreCase(user.getRole())) {
@@ -111,13 +119,28 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private boolean isExperienceAvailable(ExperienceEntity experience, @NotNull(message = "Booking date is required") Date bookingDate, int participants) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String formattedBookinDate = formatter.format(bookingDate);
+    private boolean isExperienceAvailable(ExperienceEntity experience, Instant bookingDate, int participants) {
 
         boolean isDateAvailable = experience.getAvailabilityDates().stream()
-                .anyMatch(date -> date.equals(formattedBookinDate));
-        return isDateAvailable && experience.getCapacity() >= participants;
+                .map(Instant::parse)
+                .anyMatch(date -> date.equals(bookingDate));
+
+        if (!isDateAvailable) {
+            return false;
+        }
+
+        List<BookingEntity> existingBookings = bookingRepository.findByExperienceIdAndBookingDate(
+                experience.getId(), bookingDate);
+
+        System.out.println(existingBookings);
+
+        int currentCapacity = existingBookings.stream()
+                .mapToInt(BookingEntity::getParticipants)
+                .sum();
+
+        System.out.println(currentCapacity);
+
+        return (experience.getCapacity() - currentCapacity) >= participants;
     }
 
     private double calculateTotalPrice(ExperienceEntity experience, int participants) {
@@ -129,10 +152,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private ResponseBookingDto convertToResponseDto(BookingEntity booking) {
+
+        ExperienceEntity experience = experienceRepository.findById(booking.getExperienceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Esperiencia no encontrada"));
+
         return ResponseBookingDto.builder()
                 .id(booking.getId())
                 .experienceId(booking.getExperienceId())
+                .experienceTitle(experience.getTitle())
                 .userId(booking.getUserId())
+                .tourist(booking.getTouristInfo())
+                .provider(booking.getProviderInfo())
                 .status(booking.getStatus())
                 .bookingDate(booking.getBookingDate())
                 .totalPrice(booking.getTotalPrice())

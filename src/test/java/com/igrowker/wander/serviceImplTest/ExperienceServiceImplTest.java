@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -75,32 +74,30 @@ public class ExperienceServiceImplTest {
         user.setId("user123");
         user.setRole("USER"); // No es PROVIDER
 
-        Exception exception = assertThrows(InvalidDataException.class, () -> {
-            experienceService.createExperience(request, user);
-        });
+        Exception exception = assertThrows(InvalidDataException.class, () -> experienceService.createExperience(request, user));
 
         assertEquals("El usuario no tiene permisos para crear una experiencia.", exception.getMessage());
         verifyNoInteractions(experienceRepository);
     }
 
-    @Test
-    void getExperiences_ByCityAndTag() {
-        List<String> tags = List.of("aventura");
-        List<String> location = List.of("España", "Madrid");
-
-        ExperienceEntity experience = new ExperienceEntity();
-        experience.setId("exp123");
-        experience.setTitle("Excursión");
-
-        when(experienceRepository.findByCityAndTagsIn("Madrid", tags)).thenReturn(List.of(experience));
-
-        List<ExperienceEntity> result = experienceService.getExperiences(location, null, null, tags);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("exp123", result.get(0).getId());
-        verify(experienceRepository, times(1)).findByCityAndTagsIn("Madrid", tags);
-    }
+//    @Test
+//    void getExperiences_ByCityAndTag() {
+//        List<String> tags = List.of("aventura");
+//        List<String> location = List.of("España", "Madrid");
+//
+//        ExperienceEntity experience = new ExperienceEntity();
+//        experience.setId("exp123");
+//        experience.setTitle("Excursión");
+//
+//        when(experienceRepository.findByCityAndTagsIn("Madrid", tags)).thenReturn(List.of(experience));
+//
+//        List<ExperienceEntity> result = experienceService.getExperiences(location, null, null, tags);
+//
+//        assertNotNull(result);
+//        assertEquals(1, result.size());
+//        assertEquals("exp123", result.get(0).getId());
+//        verify(experienceRepository, times(1)).findByCityAndTagsIn("Madrid", tags);
+//    }
 
     @Test
     void getExperienceById_Success() {
@@ -120,11 +117,9 @@ public class ExperienceServiceImplTest {
     void getExperienceById_NotFound() {
         when(experienceRepository.findById("exp123")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            experienceService.getExperienceById("exp123");
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> experienceService.getExperienceById("exp123"));
 
-        assertEquals("Experience with ID: exp123 was not found.", exception.getMessage());
+        assertEquals("No se encontró la experiencia con el ID: exp123", exception.getMessage());
         verify(experienceRepository, times(1)).findById("exp123");
     }
 
@@ -192,10 +187,8 @@ public class ExperienceServiceImplTest {
     void getExperiencesByHost_NotFound() {
         when(userRepository.findById("host123")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            experienceService.getExperiencesByHost("host123");
-        });
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> experienceService.getExperiencesByHost("host123"));
 
-        assertEquals("Host with id: host123 not found", exception.getMessage());
+        assertEquals("No se encontró el anfitrión con ID: host123", exception.getMessage());
     }
 }

@@ -51,16 +51,28 @@ public class BookingServiceImplTest {
     @Test
     void testGetBookingById_Success() {
         String bookingId = "booking123";
+        String experienceId = "exp123";
+
         BookingEntity booking = new BookingEntity();
         booking.setId(bookingId);
+        booking.setExperienceId(experienceId);
+
+        ExperienceEntity experience = new ExperienceEntity();
+        experience.setId(experienceId);
+        experience.setTitle("Test Experience");
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
+        when(experienceRepository.findById(experienceId)).thenReturn(Optional.of(experience));
 
         ResponseBookingDto result = bookingService.getBookingById(bookingId);
 
         assertNotNull(result);
         assertEquals(bookingId, result.getId());
+        assertEquals(experienceId, result.getExperienceId());
+        assertEquals("Test Experience", result.getExperienceTitle());
+
         verify(bookingRepository, times(1)).findById(bookingId);
+        verify(experienceRepository, times(1)).findById(experienceId);
     }
 
     @Test
@@ -119,10 +131,16 @@ public class BookingServiceImplTest {
     void testUpdateBooking_TouristCancel_Success() {
         String bookingId = "booking123";
         String userId = "user123";
+        String experienceId = "exp123";
 
         BookingEntity booking = new BookingEntity();
         booking.setId(bookingId);
+        booking.setExperienceId(experienceId);
         booking.setStatus(BookingStatus.PENDING);
+
+        ExperienceEntity experience = new ExperienceEntity();
+        experience.setId(experienceId);
+        experience.setTitle("Titulo de experiencia de prueba");
 
         User user = new User();
         user.setId(userId);
@@ -134,6 +152,7 @@ public class BookingServiceImplTest {
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(booking));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(experienceRepository.findById(experienceId)).thenReturn(Optional.of(experience));
         when(bookingRepository.save(any(BookingEntity.class))).thenReturn(booking);
 
         ResponseBookingDto result = bookingService.updateBooking(bookingId, request);
@@ -142,6 +161,7 @@ public class BookingServiceImplTest {
         assertEquals(BookingStatus.CANCELLED, result.getStatus());
         verify(bookingRepository, times(1)).findById(bookingId);
         verify(userRepository, times(1)).findById(userId);
+        verify(experienceRepository, times(1)).findById(experienceId);
         verify(bookingRepository, times(1)).save(any(BookingEntity.class));
     }
 

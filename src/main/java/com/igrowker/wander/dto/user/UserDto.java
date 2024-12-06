@@ -12,8 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserDto {
+    private String id;
     private String name;
     private String email;
+    private String avatar;
     private String role;
     private List<String> preferences;
     private String location;

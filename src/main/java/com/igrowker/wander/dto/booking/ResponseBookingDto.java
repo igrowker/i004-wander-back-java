@@ -1,6 +1,7 @@
 package com.igrowker.wander.dto.booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.igrowker.wander.dto.user.UserDto;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 
@@ -11,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Data
@@ -24,14 +26,20 @@ public class ResponseBookingDto {
     @NotNull(message = "Experience ID is required")
     private String experienceId;
 
+    private String experienceTitle;
+
     @NotNull(message = "User ID is required")
     private String userId;
+
+    private UserDto tourist;
+
+    private UserDto provider;
 
     @NotNull(message = "Booking status is required")
     private BookingStatus status;
 
-    @NotNull(message = "Booking date is required")
-    private Date bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "UTC")
+    private Instant bookingDate;
 
     @NotNull(message = "Total price is required")
     private double totalPrice;

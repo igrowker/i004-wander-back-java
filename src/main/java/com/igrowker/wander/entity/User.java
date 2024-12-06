@@ -57,6 +57,7 @@ public class User implements UserDetails {
     private Date verificationCodeExpiresAt;
 
     private String passwordResetCode;
+
     private Date passwordResetCodeExpiresAt;
 
     @Override
