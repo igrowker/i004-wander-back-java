@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDto getUserProfile() {
+    public UserDto getUserProfile(String id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -31,11 +31,18 @@ public class UserServiceImpl implements UserService {
         }
 
         User authenticatedUser = (User) authentication.getPrincipal();
-        User existingUser = userRepository.findByEmail(authenticatedUser.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró usuario con email: " + authenticatedUser.getEmail()));
 
-        return convertToUserDto(existingUser);
+        if (id != null) {
+            User existingUser = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("No se encontró usuario con ID: " + id));
+            return convertToUserDto(existingUser);
+        } else {
+            User existingUser = userRepository.findByEmail(authenticatedUser.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("No se encontró usuario con email: " + authenticatedUser.getEmail()));
+            return convertToUserDto(existingUser);
+        }
     }
+
 
     /**
      * Updates a user's profile in the database.
@@ -54,7 +61,7 @@ public class UserServiceImpl implements UserService {
         User authenticatedUser = (User) authentication.getPrincipal();
 
         User existingUser = userRepository.findByEmail(authenticatedUser.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + authenticatedUser.getEmail()));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró un usuario con el correo: " + authenticatedUser.getEmail()));
 
         if (userUpdates.getName() != null && userUpdates.getName().isBlank()) {
             throw new InvalidDataException("El nombre no puede estar vacío");

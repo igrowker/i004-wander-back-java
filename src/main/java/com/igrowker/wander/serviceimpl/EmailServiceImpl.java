@@ -42,7 +42,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private String generateVerificationEmailContent(String verificationCode) {
+    public String generateVerificationEmailContent(String verificationCode) {
         return "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #FF9D14; padding: 20px;\">"
@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
                 + "</html>";
     }
 
-    private String generatePasswordResetEmailContent(String resetCode) {
+    public String generatePasswordResetEmailContent(String resetCode) {
         return "<html><body>"
                 + "<h3>Solicitud de restablecimiento de contraseña</h3>"
                 + "<p>Haz clic en el enlace a continuación para restablecer tu contraseña:</p>"

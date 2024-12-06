@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
@@ -49,21 +48,22 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public ResponseUserDto registerUser(@Valid RegisterUserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new ResourceAlreadyExistsException("Email " + userDto.getEmail() + " already exists");
+            throw new ResourceAlreadyExistsException("El correo " + userDto.getEmail() + " ya está registrado.");
         }
 
         User user = new User();
         user.setName(userDto.getName());
+        user.setPhone(userDto.getPhone());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(userDto.getRole());
         user.setPreferences(new ArrayList<>());
         user.setLocation(userDto.getLocation());
-        user.setCreatedAt(LocalDateTime.now());
-        
+        user.setCreatedAt(new Date());
+
         user.setEnabled(false);
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));
 
         emailService.sendVerificationEmail(user);
 
@@ -71,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseUserDto responseUserDto = new ResponseUserDto();
         responseUserDto.setId(savedUser.getId());
         responseUserDto.setName(savedUser.getName());
+        responseUserDto.setPhone(savedUser.getPhone());
         responseUserDto.setEmail(savedUser.getEmail());
         responseUserDto.setRole(savedUser.getRole());
         responseUserDto.setPreferences(savedUser.getPreferences());
@@ -94,7 +95,8 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidDataException("Cuenta ya se encuentra verificada.");
         }
 
-        if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+        // Cambio aquí: LocalDateTime.now() -> new Date()
+        if (user.getVerificationCodeExpiresAt().before(new Date())) {
             throw new InvalidDataException("Código de verificación vencido.");
         }
 
@@ -119,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
 
         return responseUserDto;
     }
-    
+
     @Transactional
     @Override
     public void resendVerificationCode(String email) {
@@ -131,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
 
         userRepository.save(user);
         emailService.sendVerificationEmail(user);
@@ -161,11 +163,13 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
 
         UserDto userDto = UserDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())
                 .preferences(user.getPreferences())
                 .location(user.getLocation())
+                .phone(user.getPhone())
                 .build();
 
         return LoginResponse.builder()
@@ -186,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
 
             String token = authorizationHeader.substring(7);
 
-            jwtService.extractAllClaims(token); 
+            jwtService.extractAllClaims(token);
 
             invalidateToken(token, jwtService.extractExpiration(token));
 
@@ -206,7 +210,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         user.setPasswordResetCode(generateVerificationCode());
-        user.setPasswordResetCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setPasswordResetCodeExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000));  // Cambio aquí: LocalDateTime.now().plusMinutes(15) -> Date
         userRepository.save(user);
 
         emailService.sendPasswordResetEmail(user);
@@ -215,7 +219,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void resetPassword(String mail, String code, String newPassword) {
- 
+
         User user = userRepository.findByEmail(mail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
@@ -223,7 +227,8 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidDataException("Cuenta ya se encuentra verificada.");
         }
 
-        if (user.getPasswordResetCodeExpiresAt().isBefore(LocalDateTime.now())) {
+        // Cambio aquí: LocalDateTime.now() -> new Date()
+        if (user.getPasswordResetCodeExpiresAt().before(new Date())) {
             throw new InvalidDataException("Código de verificación vencido.");
         }
 
@@ -250,5 +255,4 @@ public class AuthServiceImpl implements AuthService {
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
     }
-
 }

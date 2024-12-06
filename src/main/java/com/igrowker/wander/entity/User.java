@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "users")
@@ -22,7 +22,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
-
     @Id
     private String id;
 
@@ -49,16 +48,17 @@ public class User implements UserDetails {
 
     private String phone;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private Date createdAt = new Date();
 
     private List<Long> bookings;
 
     private String verificationCode;
 
-    private LocalDateTime verificationCodeExpiresAt;
-    
+    private Date verificationCodeExpiresAt;
+
     private String passwordResetCode;
-    private LocalDateTime passwordResetCodeExpiresAt;
+
+    private Date passwordResetCodeExpiresAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -89,5 +89,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return this.enabled;
     }
-
 }

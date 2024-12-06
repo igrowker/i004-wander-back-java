@@ -1,12 +1,9 @@
 package com.igrowker.wander.serviceimpl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto getBookingById(String id) {
         BookingEntity booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la reserva con ID: " + id));
         return convertToResponseDto(booking);
     }
 
@@ -75,7 +72,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto createBooking(RequestBookingDto requestBookingDto) {
         ExperienceEntity experience = experienceRepository.findById(requestBookingDto.getExperienceId())
-                .orElseThrow(() -> new ResourceNotFoundException("Experience not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la experiencia"));
+
         User user = userRepository.findById(requestBookingDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -93,29 +91,48 @@ public class BookingServiceImpl implements BookingService {
         booking.setPaymentStatus(PaymentStatus.PENDING);
 
         BookingEntity savedBooking = bookingRepository.save(booking);
+
         return convertToResponseDto(savedBooking);
     }
 
     private void validateUserRoleAndUpdateBooking(User user, RequestUpdateBookingDto requestDto, BookingEntity booking) {
         if ("TOURIST".equalsIgnoreCase(user.getRole())) {
             if (requestDto.getStatus() != BookingStatus.CANCELLED) {
-                throw new IllegalArgumentException("Tourists can only cancel bookings.");
+                throw new IllegalArgumentException("Los turistas solo pueden cancelar reservas.");
             }
             booking.setStatus(BookingStatus.CANCELLED);
         } else if ("PROVIDER".equalsIgnoreCase(user.getRole())) {
             if (!isProviderStatusValid(requestDto.getStatus())) {
-                throw new IllegalArgumentException("Invalid status for provider.");
+                throw new IllegalArgumentException("Estado inválido para el proveedor.");
             }
             booking.setStatus(requestDto.getStatus());
         } else {
-            throw new InvalidUserCredentialsException("User not authorized to update booking.");
+            throw new InvalidUserCredentialsException("Usuario no autorizado para actualizar la reserva.");
         }
     }
 
-    private boolean isExperienceAvailable(ExperienceEntity experience, LocalDateTime bookingDate, int participants) {
+    private boolean isExperienceAvailable(ExperienceEntity experience, Instant bookingDate, int participants) {
+
         boolean isDateAvailable = experience.getAvailabilityDates().stream()
+                .map(Instant::parse)
                 .anyMatch(date -> date.equals(bookingDate));
-        return isDateAvailable && experience.getCapacity() >= participants;
+
+        if (!isDateAvailable) {
+            return false;
+        }
+
+        List<BookingEntity> existingBookings = bookingRepository.findByExperienceIdAndBookingDate(
+                experience.getId(), bookingDate);
+
+        System.out.println(existingBookings);
+
+        int currentCapacity = existingBookings.stream()
+                .mapToInt(BookingEntity::getParticipants)
+                .sum();
+
+        System.out.println(currentCapacity);
+
+        return (experience.getCapacity() - currentCapacity) >= participants;
     }
 
     private double calculateTotalPrice(ExperienceEntity experience, int participants) {

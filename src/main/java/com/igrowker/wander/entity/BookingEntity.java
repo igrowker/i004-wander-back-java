@@ -1,5 +1,6 @@
 package com.igrowker.wander.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.igrowker.wander.entity.enums.PaymentStatus;
 import com.igrowker.wander.entity.enums.BookingStatus;
 import jakarta.validation.constraints.Min;
@@ -10,7 +11,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -29,8 +31,8 @@ public class BookingEntity {
     @NotNull(message = "Status is required")
     private BookingStatus status;
 
-    @NotNull(message = "Booking date is required")
-    private LocalDateTime bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private Instant bookingDate;
 
     @NotNull(message = "Total price is required")
     @Min(value = 0, message = "Total price must be non-negative")
@@ -43,13 +45,9 @@ public class BookingEntity {
     @NotNull(message = "The payment status cannot be null.")
     private PaymentStatus paymentStatus;
 
-    private LocalDateTime createdAt;
+    private Date createdAt = new Date();
 
-    public void setBookingDate(LocalDateTime bookingDate) {
-        this.bookingDate = bookingDate;
-    }
-
-    public BookingEntity(String experienceId, String userId, BookingStatus status, LocalDateTime bookingDate,
+    public BookingEntity(String experienceId, String userId, BookingStatus status, Instant bookingDate,
                          double totalPrice, Integer participants, PaymentStatus paymentStatus) {
         this.experienceId = experienceId;
         this.userId = userId;
@@ -58,6 +56,5 @@ public class BookingEntity {
         this.totalPrice = totalPrice;
         this.participants = participants;
         this.paymentStatus = paymentStatus;
-        this.createdAt = LocalDateTime.now();
     }
 }

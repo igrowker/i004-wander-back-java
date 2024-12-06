@@ -19,7 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +28,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceImplTest {
-
     @Mock
     private UserRepository userRepository;
 
@@ -69,7 +68,7 @@ public class AuthServiceImplTest {
         savedUser.setEmail(userDto.getEmail());
         savedUser.setRole(userDto.getRole());
         savedUser.setLocation(userDto.getLocation());
-        savedUser.setCreatedAt(LocalDateTime.now());
+        savedUser.setCreatedAt(new Date());  // Reemplazo de LocalDateTime con Date
 
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
@@ -107,9 +106,9 @@ public class AuthServiceImplTest {
         verifyUserDto.setVerificationCode("123456");
 
         User user = new User();
-        user.setEmail("john@example.com"); // Asegúrate de configurar el email
+        user.setEmail("john@example.com");
         user.setVerificationCode("123456");
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+        user.setVerificationCodeExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000));  // Reemplazo de LocalDateTime con Date
 
         when(userRepository.findByEmail(verifyUserDto.getEmail())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -119,7 +118,7 @@ public class AuthServiceImplTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals("john@example.com", response.getEmail()); // Ahora debería coincidir
+        assertEquals("john@example.com", response.getEmail());
         assertNull(user.getVerificationCode());
         verify(userRepository, times(1)).save(user);
     }
