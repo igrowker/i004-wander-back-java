@@ -49,6 +49,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         experienceEntity.setAvailabilityDates(requestExperienceDto.getAvailabilityDates());
         experienceEntity.setTags(requestExperienceDto.getTags());
         experienceEntity.setCapacity(requestExperienceDto.getCapacity());
+        experienceEntity.setExperienceImages(requestExperienceDto.getExperienceImages());
 
         return experienceRepository.save(experienceEntity);
     }

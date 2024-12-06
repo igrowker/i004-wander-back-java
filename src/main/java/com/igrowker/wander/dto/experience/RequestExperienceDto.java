@@ -43,4 +43,8 @@ public class RequestExperienceDto {
     @Min(value = 1, message = "La capacidad debe ser al menos 1.")
     @Max(value = 50, message = "La capacidad no puede ser mayor de 50.")
     private int capacity;
+
+    @NotNull(message = "Es obligatorio subir al menos una imagen")
+    @Size(min = 1, message = "Debe haber al menos una imagen cargada")
+    private List<String> experienceImages;
 }

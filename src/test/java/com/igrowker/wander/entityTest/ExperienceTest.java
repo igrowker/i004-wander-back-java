@@ -29,6 +29,7 @@ public class ExperienceTest {
         assertEquals(0, experience.getCapacity());
         assertNotNull(experience.getCreatedAt());
         assertTrue(experience.isStatus());
+        assertNull(experience.getExperienceImages());
     }
 
     @Test
@@ -46,9 +47,10 @@ public class ExperienceTest {
         int capacity = 20;
         Date createdAt = new Date();
         boolean status = false;
+        List<String> expImag = List.of("imagen1", "imagen2", "imagen3");
 
         // Act
-        ExperienceEntity experience = new ExperienceEntity(id, title, description, location, hostId, price, availabilityDates, tags, rating, capacity, createdAt, status);
+        ExperienceEntity experience = new ExperienceEntity(id, title, description, location, hostId, price, availabilityDates, tags, rating, capacity, createdAt, status, expImag);
 
         // Assert
         assertEquals(id, experience.getId());
@@ -63,6 +65,7 @@ public class ExperienceTest {
         assertEquals(capacity, experience.getCapacity());
         assertEquals(createdAt, experience.getCreatedAt());
         assertFalse(experience.isStatus());
+        assertEquals(expImag, experience.getExperienceImages());
     }
 
     @Test
@@ -81,6 +84,7 @@ public class ExperienceTest {
         int capacity = 10;
         Date createdAt = new Date();
         boolean status = true;
+        List<String> expImag = List.of("imagen1", "imagen2", "imagen3");
 
         // Act
         experience.setId(id);
@@ -95,6 +99,7 @@ public class ExperienceTest {
         experience.setCapacity(capacity);
         experience.setCreatedAt(createdAt);
         experience.setStatus(status);
+        experience.setExperienceImages(expImag);
 
         // Assert
         assertEquals(id, experience.getId());
@@ -109,13 +114,14 @@ public class ExperienceTest {
         assertEquals(capacity, experience.getCapacity());
         assertEquals(createdAt, experience.getCreatedAt());
         assertTrue(experience.isStatus());
+        assertEquals(expImag, experience.getExperienceImages());
     }
 
     @Test
     void testEqualityAndHashCode() {
         // Arrange
-        ExperienceEntity experience1 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true);
-        ExperienceEntity experience2 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true);
+        ExperienceEntity experience1 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true, List.of("imagen1"));
+        ExperienceEntity experience2 = new ExperienceEntity("1", "Title", "Description", Arrays.asList("England", "London", "51°30'58.1\"N", "0°08'28.0\"W"), "host123", 100.0, null, null, 4.5, 10, new Date(), true, List.of("imagen1"));
 
         // Act & Assert
         assertEquals(experience1, experience2);
