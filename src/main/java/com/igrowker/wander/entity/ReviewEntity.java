@@ -24,10 +24,16 @@ public class ReviewEntity {
 	private String experienceId;
 	
 	private String userId;
+
+	private String userAvatar;
+
+	private String userName;
 	
 	private Double rating; 
 	
 	private String comment;
 	
 	private Date createdAt = new Date();
+
+
 }

@@ -22,9 +22,9 @@ import com.igrowker.wander.service.ReviewService;
 import jakarta.validation.Valid;
 
 @Service
-public class ReviewServiceImpl implements ReviewService{
+public class ReviewServiceImpl implements ReviewService {
 
-	@Autowired
+    @Autowired
     private ReviewRepository reviewRepository;
 
     @Autowired
@@ -44,25 +44,21 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public ReviewEntity addReview(@Valid RequestReviewDto reviewDto) {
-        ReviewEntity review = new ReviewEntity();
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        review.setExperienceId(reviewDto.getExperienceId());
-        review.setRating(reviewDto.getRating());
-        review.setComment(reviewDto.getComment());
-        review.setCreatedAt(new Date());
-        review.setUserId(user.getId());
+        ExperienceEntity experience = experienceRepository.findById(reviewDto.getExperienceId())
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró la experiencia con ID: " + reviewDto.getExperienceId()));
+
+        ReviewEntity review = convertToReviewEntity(reviewDto);
 
         ReviewEntity savedReview = reviewRepository.save(review);
 
         List<ReviewEntity> allReviews = reviewRepository.findByExperienceId(review.getExperienceId());
-        
+
+        // update experience rating
         double sumRatings = allReviews.stream()
                 .mapToDouble(ReviewEntity::getRating)
                 .sum();
         double averageRating = sumRatings / allReviews.size();
 
-        ExperienceEntity experience = experienceRepository.findById(review.getExperienceId())
-                .orElseThrow(() -> new IllegalArgumentException("No se encontró la experiencia con ID: " + review.getExperienceId()));
         experience.setRating(averageRating);
         experienceRepository.save(experience);
 
@@ -88,6 +84,20 @@ public class ReviewServiceImpl implements ReviewService{
         return convertToResponseDto(review);
     }
 
+    private ReviewEntity convertToReviewEntity(RequestReviewDto reviewDto){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ReviewEntity review = new ReviewEntity();
+
+        review.setExperienceId(reviewDto.getExperienceId());
+        review.setRating(reviewDto.getRating());
+        review.setComment(reviewDto.getComment());
+        review.setCreatedAt(new Date());
+        review.setUserId(user.getId());
+        review.setUserName(user.getName());
+        review.setUserAvatar(user.getAvatar());
+
+        return review;
+    }
 
     private ResponseReviewDto convertToResponseDto(ReviewEntity review) {
         ResponseReviewDto responseDto = new ResponseReviewDto();
@@ -96,6 +106,10 @@ public class ReviewServiceImpl implements ReviewService{
         responseDto.setRating(review.getRating());
         responseDto.setComment(review.getComment());
         responseDto.setCreatedAt(review.getCreatedAt());
+
+        if (review.getUserName() != null) responseDto.setUserName(review.getUserName());
+        if (review.getUserAvatar() != null) responseDto.setUserAvatar(review.getUserAvatar());
+
         return responseDto;
     }
 
