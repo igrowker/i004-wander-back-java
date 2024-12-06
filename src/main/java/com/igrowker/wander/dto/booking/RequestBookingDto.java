@@ -1,13 +1,15 @@
 package com.igrowker.wander.dto.booking;
 
-import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -18,8 +20,8 @@ public class RequestBookingDto {
     @NotBlank(message = "Experience ID is required")
     private String experienceId;
 
-    @NotNull(message = "Booking date is required")
-    private Date bookingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "UTC")
+    private Instant bookingDate;
 
     @NotNull(message = "Number of participants is required")
     @Min(value = 1, message = "At least one participant is required")
