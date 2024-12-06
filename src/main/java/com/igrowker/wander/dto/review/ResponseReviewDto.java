@@ -12,6 +12,8 @@ import java.util.Date;
 public class ResponseReviewDto {
     private String id;
     private String userId;
+    private String userAvatar;
+    private String userName;
     private Double rating;
     private String comment;
     private Date createdAt;
