@@ -167,6 +167,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .name(user.getName())
                 .role(user.getRole())
+                .avatar(user.getAvatar())
                 .preferences(user.getPreferences())
                 .location(user.getLocation())
                 .phone(user.getPhone())
