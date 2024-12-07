@@ -1,5 +1,6 @@
 package com.igrowker.wander.controller;
 
+import com.igrowker.wander.dto.experience.ResponseExperienceWithSlotsDto;
 import com.igrowker.wander.dto.experience.RequestExperienceDto;
 import com.igrowker.wander.dto.experience.ResponseExperienceDto;
 import com.igrowker.wander.entity.ExperienceEntity;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -61,10 +61,10 @@ public class ExperienceController {
 
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ExperienceEntity> getExperienceById(@PathVariable String id) {
+	public ResponseEntity<ResponseExperienceWithSlotsDto> getExperienceByIdWithSlots(@PathVariable String id) {
 		try {
-			ExperienceEntity experience = experienceService.getExperienceById(id);
-			return ResponseEntity.ok(experience);
+			ResponseExperienceWithSlotsDto experienceWithSlots = experienceService.getExperienceByIdWithSlots(id);
+			return ResponseEntity.ok(experienceWithSlots);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} catch (Exception e) {

@@ -1,18 +1,18 @@
 package com.igrowker.wander.serviceimpl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.igrowker.wander.dto.experience.*;
+import com.igrowker.wander.entity.BookingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.igrowker.wander.dto.experience.ExperienceReservationCountDto;
-import com.igrowker.wander.dto.experience.RequestExperienceDto;
-import com.igrowker.wander.dto.experience.ResponseExperienceDto;
 import com.igrowker.wander.entity.ExperienceEntity;
 import com.igrowker.wander.entity.User;
 import com.igrowker.wander.exception.InvalidDataException;
@@ -229,6 +229,50 @@ public class ExperienceServiceImpl implements ExperienceService {
                 .collect(Collectors.toList());
 
         return experienceRepository.findAllById(experienceIds);
+    }
+
+    public ResponseExperienceWithSlotsDto getExperienceByIdWithSlots(String id) {
+        ExperienceEntity experience = experienceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Experiencia no encontrada con el id: " + id));
+
+        List<AvailabilityDateWithSlotsDto> availabilityWithSlots = new ArrayList<>();
+
+        for (String date : experience.getAvailabilityDates()) {
+            Instant bookingDate = Instant.parse(date);
+            AvailabilityDateWithSlotsDto dto = calculateAvailableSlotsForDate(experience, bookingDate);
+            availabilityWithSlots.add(dto);
+        }
+
+        return new ResponseExperienceWithSlotsDto(
+                experience.getId(),
+                experience.getTitle(),
+                experience.getDescription(),
+                experience.getLocation(),
+                experience.getHostId(),
+                experience.getPrice(),
+                availabilityWithSlots,
+                experience.getTags(),
+                experience.getRating(),
+                experience.getCapacity(),
+                experience.getCreatedAt(),
+                experience.isStatus()
+        );
+    }
+
+    private AvailabilityDateWithSlotsDto calculateAvailableSlotsForDate(ExperienceEntity experience, Instant bookingDate) {
+        List<BookingEntity> bookingsForDate = bookingRepository.findByExperienceIdAndBookingDate(
+                experience.getId(),
+                bookingDate
+        );
+
+        int totalParticipantsBooked = 0;
+        for (BookingEntity booking : bookingsForDate) {
+            totalParticipantsBooked += booking.getParticipants();
+        }
+
+        int availableSlots = experience.getCapacity() - totalParticipantsBooked;
+
+        return new AvailabilityDateWithSlotsDto(bookingDate.toString(), Math.max(availableSlots, 0));
     }
 
     private ResponseExperienceDto convertToResponseDto(ExperienceEntity experience) {
