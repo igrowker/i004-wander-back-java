@@ -54,5 +54,11 @@ public class ResponseBookingDto {
     @NotNull(message = "Creation date is required")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "UTC")
     private Date createdAt;
+
+    public ResponseBookingDto(String number, Object o, Object o1, Object o2, Object o3) {
+    }
+
+    public void setDetails(String updatedDetails) {
+    }
 }
 
