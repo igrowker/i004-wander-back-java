@@ -82,7 +82,7 @@ public class ExperienceServiceImpl implements ExperienceService {
             results = experienceRepository.findByCountry(country);
         } else {
             // Filtro: Si solo queda `location` genérico
-            results = experienceRepository.findByLocationContains(location);
+            results = experienceRepository.findAll();
         }
 
         // Filtro adicional: Tags
