@@ -18,6 +18,7 @@ public class ResponseExperienceDto {
     private String hostId;
     private Double price;
     private List<String> availabilityDates;
+    private List<String> experienceImages;
     private List<String> tags;
     private Double rating;
     private int capacity;
