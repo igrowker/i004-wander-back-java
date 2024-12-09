@@ -41,6 +41,10 @@ public class ExperienceServiceImpl implements ExperienceService {
         }
         ExperienceEntity experienceEntity = new ExperienceEntity();
 
+        List<String> images = List.of("https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0a/83/33/dd/lagos-de-covadonga.jpg?w=1200&h=1200&s=1",
+                "https://fronteraverde.com/wp-content/uploads/2017/02/DSCN4603.jpg",
+                "https://www.turismoasturias.es/documents/39908/c5d45bb0-1d94-7a38-4558-f358f964b4bd");
+
         experienceEntity.setHostId(user.getId());
         experienceEntity.setTitle(requestExperienceDto.getTitle());
         experienceEntity.setDescription(requestExperienceDto.getDescription());
@@ -49,7 +53,7 @@ public class ExperienceServiceImpl implements ExperienceService {
         experienceEntity.setAvailabilityDates(requestExperienceDto.getAvailabilityDates());
         experienceEntity.setTags(requestExperienceDto.getTags());
         experienceEntity.setCapacity(requestExperienceDto.getCapacity());
-        experienceEntity.setExperienceImages(requestExperienceDto.getExperienceImages());
+        experienceEntity.setExperienceImages(images);
 
         return experienceRepository.save(experienceEntity);
     }
@@ -57,9 +61,9 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Override
     public List<ExperienceEntity> getExperiences(List<String> location, Double maxPrice, String title, List<String> tags) {
         // Control: Si no hay filtros, devolver todo
-        if ((location == null || location.isEmpty()) 
-                && maxPrice == null 
-                && (title == null || title.trim().isEmpty()) 
+        if ((location == null || location.isEmpty())
+                && maxPrice == null
+                && (title == null || title.trim().isEmpty())
                 && (tags == null || tags.isEmpty())) {
             return experienceRepository.findAll();
         }
@@ -82,7 +86,7 @@ public class ExperienceServiceImpl implements ExperienceService {
             results = experienceRepository.findByCountry(country);
         } else {
             // Filtro: Si solo queda `location` genérico
-            results = experienceRepository.findByLocationContains(location);
+            results = experienceRepository.findAll();
         }
 
         // Filtro adicional: Tags
@@ -240,6 +244,7 @@ public class ExperienceServiceImpl implements ExperienceService {
                 experience.getHostId(),
                 experience.getPrice(),
                 experience.getAvailabilityDates(),
+                experience.getExperienceImages(),
                 experience.getTags(),
                 experience.getRating(),
                 experience.getCapacity(),
