@@ -160,6 +160,7 @@ public class BookingServiceImpl implements BookingService {
                 .id(booking.getId())
                 .experienceId(booking.getExperienceId())
                 .experienceTitle(experience.getTitle())
+                .experienceImages(experience.getExperienceImages())
                 .userId(booking.getUserId())
                 .tourist(booking.getTouristInfo())
                 .provider(booking.getProviderInfo())
