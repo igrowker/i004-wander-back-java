@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +28,8 @@ public class ResponseBookingDto {
     private String experienceId;
 
     private String experienceTitle;
+
+    private List<String> experienceImages;
 
     @NotNull(message = "User ID is required")
     private String userId;
