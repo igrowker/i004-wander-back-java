@@ -19,4 +19,8 @@ public class RequestUpdateBookingDto {
 
     @NotNull(message = "Status is required")
     private BookingStatus status;
+
+    public void setDetails(String updatedDetails) {
+
+    }
 }
