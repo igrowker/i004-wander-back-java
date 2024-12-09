@@ -3,7 +3,6 @@ package com.igrowker.wander.controllerTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.igrowker.wander.controller.BookingController;
 import com.igrowker.wander.dto.booking.RequestBookingDto;
-import com.igrowker.wander.dto.booking.RequestUpdateBookingDto;
 import com.igrowker.wander.dto.booking.ResponseBookingDto;
 import com.igrowker.wander.service.BookingService;
 import com.igrowker.wander.service.ExperienceService;
